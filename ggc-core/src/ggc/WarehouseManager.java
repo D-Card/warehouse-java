@@ -17,6 +17,10 @@ public class WarehouseManager {
   //FIXME define constructor(s)
   //FIXME define other methods
 
+  public void requestDaysToAdvance(int days) throws InvalidDateException {
+    _warehouse.advanceDays(int days);
+  }
+
   /**
    * @@throws IOException
    * @@throws FileNotFoundException
