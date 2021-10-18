@@ -13,7 +13,12 @@ public class Warehouse implements Serializable {
   private static final long serialVersionUID = 202109192006L;
 
   // FIXME define attributes
-  // FIXME define contructor(s)
+  private float _balance = 0;
+  private float _contabilisticBalance = 0;
+  private int _date;
+
+
+  // FIXME define constructor(s)
   // FIXME define methods
 
   public void advanceDays(int days) throws InvalidDateException {
