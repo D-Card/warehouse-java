@@ -16,6 +16,12 @@ public class Warehouse implements Serializable {
   // FIXME define contructor(s)
   // FIXME define methods
 
+  public void advanceDays(int days) throws InvalidDateException {
+    if (days > 0) 
+      _date += days;
+    else throw new InvalidDateException(days);
+  }
+
   /**
    * @param txtfile filename to be loaded.
    * @throws IOException
