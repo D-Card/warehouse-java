@@ -18,7 +18,7 @@ public class WarehouseManager {
   //FIXME define other methods
 
   public void requestDaysToAdvance(int days) throws InvalidDateException {
-    _warehouse.advanceDays(int days);
+    _warehouse.advanceDays(days);
   }
 
   /**
