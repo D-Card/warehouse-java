@@ -18,7 +18,6 @@ class DoDisplayDate extends Command<WarehouseManager> {
     //FIXME implement command
     int date = _receiver.displayDate();
     _display.popup(Message.currentDate(date));
-
   }
 
 }
