@@ -21,6 +21,10 @@ public class WarehouseManager {
     _warehouse.advanceDays(days);
   }
 
+  public int displayDate(){
+    return _warehouse.getDate();
+  }
+
   /**
    * @@throws IOException
    * @@throws FileNotFoundException

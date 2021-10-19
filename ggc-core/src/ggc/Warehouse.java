@@ -16,7 +16,7 @@ public class Warehouse implements Serializable {
   // FIXME define attributes
   private float _balance = 0;
   private float _contabilisticBalance = 0;
-  private int _date;
+  private int _date = 0;
 
 
   // FIXME define constructor(s)
@@ -26,6 +26,10 @@ public class Warehouse implements Serializable {
     if (days > 0) 
       _date += days;
     else throw new InvalidDateException(days);
+  }
+
+  public int getDate() {
+    return _date;
   }
 
   /**
