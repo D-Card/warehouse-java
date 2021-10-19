@@ -22,10 +22,10 @@ public class Warehouse implements Serializable {
   // FIXME define constructor(s)
   // FIXME define methods
 
-  public void advanceDays(int days) throws InvalidDateException {
+  public void advanceDays(int days) throws NoSuchDateException {
     if (days > 0) 
       _date += days;
-    else throw new InvalidDateException(days);
+    else throw new NoSuchDateException(days);
   }
 
   public int getDate() {

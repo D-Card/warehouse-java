@@ -4,6 +4,8 @@ import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
 import ggc.WarehouseManager;
 //FIXME import classes
+import ggc.exceptions.NoSuchDateException;
+import ggc.app.exceptions.InvalidDateException;
 
 /**
  * Advance current date.
@@ -19,6 +21,11 @@ class DoAdvanceDate extends Command<WarehouseManager> {
   @Override
   public final void execute() throws CommandException {
     //FIXME implement command
+    try {
+      _receiver.requestDaysToAdvance(integerField("days"));
+    } catch (NoSuchDateException e) {
+        throw new InvalidDateException(e.getDate());
+    }
   }
 
 }
