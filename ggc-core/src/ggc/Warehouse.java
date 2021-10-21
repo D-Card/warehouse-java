@@ -56,7 +56,7 @@ public class Warehouse implements Serializable {
     int totalBatches = _batches.size();
     Batch currentBatch;
 
-    for (int i = 0; i < totalProducts; i++) {
+    for (int i = 0; i < totalBatches; i++) {
       currentBatch = _batches.get(i);
 
       System.out.println(currentBatch);
