@@ -14,7 +14,7 @@ public class Partner implements Serializable {
     private Mailbox _mailbox = new Mailbox();
     // TBD - Datastructure for transaction history
 
-    public Partner(name, address) {
+    public Partner(String name, String address) {
         _name = name;
         _address = address;
     }
@@ -42,23 +42,23 @@ public class Partner implements Serializable {
     }
 
     // Setters
-    public void setName(name) {
+    public void setName(String name) {
         _name = name;
     }
 
-    public void setAddress(address) {
+    public void setAddress(String address) {
         _address = address;
     }
 
-    public void setStatus(status) {
+    public void setStatus(int status) {
         _status = status;
     }
 
-    public void setPoints(points) {
+    public void setPoints(int points) {
         _points = points;
     }
 
-    public void setMailbox(mailbox) {
+    public void setMailbox(Mailbox mailbox) {
         _mailbox = mailbox;
     }
 
