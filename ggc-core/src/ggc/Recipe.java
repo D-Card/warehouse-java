@@ -7,8 +7,8 @@ import ggc.exceptions.*;
 
 public class Recipe {
 
-    private LinkedList<Product> _products = new LinkedList<Product>;
-    private TreeMap<Product, int> _productQuantities = new TreeMap<Product, int>;
+    private LinkedList<Product> _products = new LinkedList<Product>();
+    private TreeMap<Product, Integer> _productQuantities = new TreeMap<Product, Integer>();
 
     public void addProduct(Product product, int quantity) {
         _products.add(product);
@@ -23,8 +23,8 @@ public class Recipe {
     public int getProductQuantity(Product product) {
         int quantity = _productQuantities.get(product);
 
-        if quantity == null return 0;
-        else return quantity;
+        if (!_products.contains(product)) { return 0; }
+        else { return quantity; }
     }
 
     @Override
@@ -33,12 +33,13 @@ public class Recipe {
         int totalProducts = _products.size();
         Product currentProduct;
 
-        for (i = 0; i < totalProducts; i++) {
+        for (int i = 0; i < totalProducts; i++) {
             currentProduct = _products.get(i);
 
-            if i > 0 currentString += "#";
-            currentString += currentProduct.getName() + "-" + getProductQuantity(currentProduct);
+            if (i > 0) { currentString += "#"; }
+            currentString += currentProduct.getId() + "-" + getProductQuantity(currentProduct);
         }
 
+        return currentString;
     }
 }

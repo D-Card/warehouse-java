@@ -31,7 +31,7 @@ public abstract class Product {
     }
 
     public void setMaxPrice(float maxPrice) {
-        _maxPrice = maxPrice
+        _maxPrice = maxPrice;
     }
 
     public void setStock(int stock) {

@@ -36,7 +36,7 @@ public class DerivativeProduct extends Product {
 
     @Override
     public String toString() {
-        return getName() + "|" + getMaxPrice() + "|" + getStock() + "|" + _multiplier + "|" + _recipe;
+        return getId() + "|" + getMaxPrice() + "|" + getStock() + "|" + _multiplier + "|" + _recipe.toString();
     }
 
 }
