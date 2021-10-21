@@ -21,7 +21,15 @@ public class WarehouseManager {
     _warehouse.advanceDays(days);
   }
 
-  public int displayDate(){
+  public double requestAvailableBalance() {
+    return _warehouse.getAvailableBalance();
+  }
+
+  public double requestContabilisticBalance() {
+    return _warehouse.getContabilisticBalance();
+  }
+
+  public int requestDate(){
     return _warehouse.getDate();
   }
 

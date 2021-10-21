@@ -14,8 +14,8 @@ public class Warehouse implements Serializable {
   private static final long serialVersionUID = 202109192006L;
 
   // FIXME define attributes
-  private float _balance = 0;
-  private float _contabilisticBalance = 0;
+  private double _availableBalance = 0;
+  private double _contabilisticBalance = 0;
   private int _date = 0;
 
 
@@ -30,6 +30,14 @@ public class Warehouse implements Serializable {
 
   public int getDate() {
     return _date;
+  }
+
+  public double getAvailableBalance() {
+    return _availableBalance;
+  }
+
+  public double getContabilisticBalance() {
+    return _contabilisticBalance;
   }
 
   /**
