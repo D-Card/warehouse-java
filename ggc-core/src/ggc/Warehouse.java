@@ -17,7 +17,7 @@ public class Warehouse implements Serializable {
   private double _availableBalance = 0;
   private double _contabilisticBalance = 0;
   private int _date = 0;
-
+  private LinkedList<Product> _products = new LinkedList<Product>();
 
   // FIXME define constructor(s)
   // FIXME define methods
@@ -38,6 +38,17 @@ public class Warehouse implements Serializable {
 
   public double getContabilisticBalance() {
     return _contabilisticBalance;
+  }
+
+  public void listAllProducts() {
+    int totalProducts = _products.size();
+    Product currentProduct;
+
+    for (int i = 0; i < totalProducts; i++) {
+      currentProduct = _products.get(i);
+
+      System.out.println(currentProduct);
+    }
   }
 
   /**
