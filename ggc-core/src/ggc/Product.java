@@ -38,4 +38,8 @@ public abstract class Product {
         _stock = stock;
     }
 
+    public void addStock(int stock) {
+        _stock += stock;
+    }
+
 }
