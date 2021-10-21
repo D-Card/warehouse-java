@@ -18,7 +18,10 @@ public class Warehouse implements Serializable {
   private double _contabilisticBalance = 0;
   private int _date = 0;
   private LinkedList<Product> _products = new LinkedList<Product>();
+  private TreeMap<String, Product> _productLookup = new TreeMap<String, Product>();
   private LinkedList<Batch> _batches = new LinkedList<Batch>();
+  private TreeMap<Partner, LinkedList<Batch>> _batchesByPartner = new TreeMap<Partner, LinkedList<Batch>>();
+  private TreeMap<Product, LinkedList<Batch>> _batchesByProduct = new TreeMap<Product, LinkedList<Batch>>();
 
   // FIXME define constructor(s)
   // FIXME define methods
@@ -39,6 +42,10 @@ public class Warehouse implements Serializable {
 
   public double getContabilisticBalance() {
     return _contabilisticBalance;
+  }
+
+  public Product lookupProduct(String id) {
+    return _productLookup.get(id);
   }
 
   public void listAllProducts() {
@@ -62,6 +69,33 @@ public class Warehouse implements Serializable {
       System.out.println(currentBatch);
     }
   }
+
+  public void listBatchesByPartner(Partner partner) {
+    LinkedList<Batch> batchList = _batchesByPartner.get(partner);
+
+    int totalBatches = batchList.size();
+    Batch currentBatch;
+
+    for (int i = 0; i < totalBatches; i++) {
+      currentBatch = _batches.get(i);
+
+      System.out.println(currentBatch);
+    }
+  }
+
+  public void listBatchesByProduct(Product product) {
+    LinkedList<Batch> batchList = _batchesByProduct.get(product);
+
+    int totalBatches = batchList.size();
+    Batch currentBatch;
+
+    for (int i = 0; i < totalBatches; i++) {
+      currentBatch = _batches.get(i);
+
+      System.out.println(currentBatch);
+    }
+  }
+
 
   /**
    * @param txtfile filename to be loaded.
