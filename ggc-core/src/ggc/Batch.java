@@ -12,8 +12,9 @@ public class Batch {
     private int _stock;
     private Partner _partner;
 
-    public Batch(float price, Product product, Partner partner) {
+    public Batch(Product product, Partner partner, float price, int stock) {
         _price = price;
+        _stock = stock;
         _product = product;
         _partner = partner;
     }
