@@ -11,12 +11,23 @@ public class WarehouseManager {
   /** Name of file storing current store. */
   private String _filename = "";
 
+  private boolean _missingFilename = true;
+
   /** The warehouse itself. */
   private Warehouse _warehouse = new Warehouse();
 
   //FIXME define other attributes
   //FIXME define constructor(s)
   //FIXME define other methods
+
+  public boolean missingFilename() { return _missingFilename; }
+
+  public void setFilename(String filename) {
+    _filename = filename;
+    _missingFilename = false;
+  }
+
+  public String getFilename() { return _filename; }
 
   public void requestDaysToAdvance(int days) throws NoSuchDateException {
     _warehouse.advanceDays(days);
@@ -72,7 +83,13 @@ public class WarehouseManager {
    * @@throws MissingFileAssociationException
    */
   public void save() throws IOException, FileNotFoundException, MissingFileAssociationException {
-    //FIXME implement serialization method
+    try {
+      ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(_filename)));
+      oos.writeObject(_warehouse);
+      oos.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   /**
@@ -91,7 +108,12 @@ public class WarehouseManager {
    * @@throws UnavailableFileException
    */
   public void load(String filename) throws UnavailableFileException {
-    //FIXME implement serialization method
+    try {
+      ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(filename)));
+      _warehouse = (Warehouse) ois.readObject();
+      ois.close();
+    } catch (IOException e) { e.printStackTrace(); }
+    catch (ClassNotFoundException e) { e.printStackTrace(); }
   }
 
   /**
