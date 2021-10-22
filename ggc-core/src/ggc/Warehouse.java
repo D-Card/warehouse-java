@@ -89,6 +89,10 @@ public class Warehouse implements Serializable {
     throw new DuplicatePartnerException(id);
   }
 
+  public LinkedList<Notification> listPartnerNotifications(Partner partner) {
+    return partner.listAllNotifications();
+  }
+
   public LinkedList<Partner> listAllPartners() {
     return _partners;
   }

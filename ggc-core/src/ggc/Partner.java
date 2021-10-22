@@ -51,6 +51,8 @@ public class Partner {
         return _mailbox;
     }
 
+    public LinkedList<Notification> listAllNotifications() { return _mailbox.listAllNotifications(); }
+
     // Setters
     public void setName(String name) {
         _name = name;

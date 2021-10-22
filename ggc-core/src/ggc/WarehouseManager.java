@@ -58,6 +58,14 @@ public class WarehouseManager {
     return _warehouse.listAllPartners();
   }
 
+  public Partner requestShowPartner(String id) throws NoSuchPartnerException {
+    return _warehouse.lookupPartner(id);
+  }
+
+  public LinkedList<Notification> requestListPartnerNotifications(String id) throws NoSuchPartnerException {
+    return _warehouse.listPartnerNotifications(_warehouse.lookupPartner(id));
+  }
+
   /**
    * @@throws IOException
    * @@throws FileNotFoundException
