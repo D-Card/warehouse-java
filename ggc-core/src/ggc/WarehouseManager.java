@@ -2,6 +2,7 @@ package ggc;
 
 //FIXME import classes (cannot import from pt.tecnico or ggc.app)
 import java.io.*;
+import java.util.*;
 import ggc.exceptions.*;
 
 /** Façade for access. */
@@ -31,6 +32,22 @@ public class WarehouseManager {
 
   public int requestDate(){
     return _warehouse.getDate();
+  }
+
+  public LinkedList<Product> requestListAllProducts() {
+    return _warehouse.listAllProducts();
+  }
+
+  public LinkedList<Batch> requestListAllBatches() {
+    return _warehouse.listAllBatches();
+  }
+
+  public LinkedList<Batch> requestListBatchesByProduct(String id) throws NoSuchProductException {
+    return _warehouse.listBatchesByProduct(_warehouse.lookupProduct(id));
+  }
+
+  public LinkedList<Batch> requestListBatchesByPartner(String name) throws NoSuchPartnerException {
+    return _warehouse.listBatchesByPartner(_warehouse.lookupPartner(name));
   }
 
   /**

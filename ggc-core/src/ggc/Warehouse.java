@@ -22,6 +22,7 @@ public class Warehouse implements Serializable {
   private LinkedList<Batch> _batches = new LinkedList<Batch>();
   private TreeMap<Partner, LinkedList<Batch>> _batchesByPartner = new TreeMap<Partner, LinkedList<Batch>>();
   private TreeMap<Product, LinkedList<Batch>> _batchesByProduct = new TreeMap<Product, LinkedList<Batch>>();
+  private TreeMap<String, Partner> _partnerLookup = new TreeMap<String, Partner>();
 
   // FIXME define constructor(s)
   // FIXME define methods
@@ -44,56 +45,34 @@ public class Warehouse implements Serializable {
     return _contabilisticBalance;
   }
 
-  public Product lookupProduct(String id) {
+  public Product lookupProduct(String id) throws NoSuchProductException {
+    if (!_productLookup.containsKey(id)) { throw new NoSuchProductException(id); }
     return _productLookup.get(id);
   }
 
-  public void listAllProducts() {
-    int totalProducts = _products.size();
-    Product currentProduct;
-
-    for (int i = 0; i < totalProducts; i++) {
-      currentProduct = _products.get(i);
-
-      System.out.println(currentProduct);
-    }
+  public Partner lookupPartner(String name) throws NoSuchPartnerException {
+    if (!_partnerLookup.containsKey(name)) { throw new NoSuchPartnerException(name); }
+    return _partnerLookup.get(name);
   }
 
-  public void listAllBatches() {
-    int totalBatches = _batches.size();
-    Batch currentBatch;
-
-    for (int i = 0; i < totalBatches; i++) {
-      currentBatch = _batches.get(i);
-
-      System.out.println(currentBatch);
-    }
+  public LinkedList<Product> listAllProducts() {
+    return _products;
   }
 
-  public void listBatchesByPartner(Partner partner) {
+  public LinkedList<Batch> listAllBatches() {
+    return _batches;
+  }
+
+  public LinkedList<Batch> listBatchesByPartner(Partner partner) {
     LinkedList<Batch> batchList = _batchesByPartner.get(partner);
 
-    int totalBatches = batchList.size();
-    Batch currentBatch;
-
-    for (int i = 0; i < totalBatches; i++) {
-      currentBatch = _batches.get(i);
-
-      System.out.println(currentBatch);
-    }
+    return batchList;
   }
 
-  public void listBatchesByProduct(Product product) {
+  public LinkedList<Batch> listBatchesByProduct(Product product) {
     LinkedList<Batch> batchList = _batchesByProduct.get(product);
 
-    int totalBatches = batchList.size();
-    Batch currentBatch;
-
-    for (int i = 0; i < totalBatches; i++) {
-      currentBatch = _batches.get(i);
-
-      System.out.println(currentBatch);
-    }
+    return batchList;
   }
 
 
