@@ -4,15 +4,20 @@ package ggc;
 import java.io.*;
 import java.util.*;
 import ggc.exceptions.*;
+import java.lang.Math;
 
 public class Partner {
 
     private String _name;
     private String _id;
     private String _address;
-    private int _status;
-    private int _points;
+    private String _status = "NORMAL";
+    private int _points = 0;
+    private float _buyTotalValue = 0;
+    private float _sellTotalValue = 0;
+    private float _sellPaidValue = 0;
     private Mailbox _mailbox = new Mailbox();
+
     // TBD - Datastructure for transaction history
 
     public Partner(String id, String name, String address) {
@@ -34,7 +39,7 @@ public class Partner {
         return _address;
     }
 
-    public int getStatus() {
+    public String getStatus() {
         return _status;
     }
 
@@ -59,7 +64,7 @@ public class Partner {
         _address = address;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(String status) {
         _status = status;
     }
 
@@ -69,6 +74,11 @@ public class Partner {
 
     public void setMailbox(Mailbox mailbox) {
         _mailbox = mailbox;
+    }
+
+    @Override
+    public String toString() {
+        return _id + "|" + _name + "|" + _address + "|" + _status + "|" + Math.round(_points) + "|" + Math.round(_buyTotalValue) + "|" + Math.round(_sellTotalValue) + "|" + Math.round(_sellPaidValue);
     }
 
 }

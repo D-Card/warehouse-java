@@ -89,6 +89,9 @@ public class Warehouse implements Serializable {
     throw new DuplicatePartnerException(id);
   }
 
+  public LinkedList<Partner> listAllPartners() {
+    return _partners;
+  }
 
   /**
    * @param txtfile filename to be loaded.

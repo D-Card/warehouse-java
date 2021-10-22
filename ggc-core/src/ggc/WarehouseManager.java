@@ -54,6 +54,10 @@ public class WarehouseManager {
     _warehouse.registerNewPartner(id, name, address);
   }
 
+  public LinkedList<Partner> requestListAllPartners () {
+    return _warehouse.listAllPartners();
+  }
+
   /**
    * @@throws IOException
    * @@throws FileNotFoundException
