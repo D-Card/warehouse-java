@@ -23,7 +23,7 @@ class DoShowBatchesByPartner extends Command<WarehouseManager> {
     try {
       _display.popup(_receiver.requestListBatchesByPartner(stringField("partner")));
     } catch (NoSuchPartnerException e) {
-      throw new UnknownPartnerKeyException(e.getName());
+      throw new UnknownPartnerKeyException(e.getId());
     }
   }
 

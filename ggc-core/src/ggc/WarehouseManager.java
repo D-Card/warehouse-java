@@ -46,8 +46,12 @@ public class WarehouseManager {
     return _warehouse.listBatchesByProduct(_warehouse.lookupProduct(id));
   }
 
-  public LinkedList<Batch> requestListBatchesByPartner(String name) throws NoSuchPartnerException {
-    return _warehouse.listBatchesByPartner(_warehouse.lookupPartner(name));
+  public LinkedList<Batch> requestListBatchesByPartner(String id) throws NoSuchPartnerException {
+    return _warehouse.listBatchesByPartner(_warehouse.lookupPartner(id));
+  }
+
+  public void requestRegisterPartner(String id, String name, String address) throws DuplicatePartnerException {
+    _warehouse.registerNewPartner(id, name, address);
   }
 
   /**

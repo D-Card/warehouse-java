@@ -1,10 +1,10 @@
 package ggc.exceptions;
 
-public class NoSuchPartnerException extends Exception {
+public class DuplicatePartnerException extends Exception {
 
     private final String _id;
 
-    public NoSuchPartnerException(String id) {
+    public DuplicatePartnerException(String id) {
         _id = id;
     }
 

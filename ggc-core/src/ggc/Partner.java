@@ -8,21 +8,26 @@ import ggc.exceptions.*;
 public class Partner {
 
     private String _name;
+    private String _id;
     private String _address;
     private int _status;
     private int _points;
     private Mailbox _mailbox = new Mailbox();
     // TBD - Datastructure for transaction history
 
-    public Partner(String name, String address) {
+    public Partner(String id, String name, String address) {
+        _id = id;
         _name = name;
         _address = address;
     }
 
-
     // Getters
     public String getName() {
         return _name;
+    }
+
+    public String getId() {
+        return _id;
     }
 
     public String getAddress() {
@@ -44,6 +49,10 @@ public class Partner {
     // Setters
     public void setName(String name) {
         _name = name;
+    }
+
+    public void setId(String id) {
+        _id = id;
     }
 
     public void setAddress(String address) {

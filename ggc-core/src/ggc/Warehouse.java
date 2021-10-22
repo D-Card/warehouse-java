@@ -23,6 +23,7 @@ public class Warehouse implements Serializable {
   private TreeMap<Partner, LinkedList<Batch>> _batchesByPartner = new TreeMap<Partner, LinkedList<Batch>>();
   private TreeMap<Product, LinkedList<Batch>> _batchesByProduct = new TreeMap<Product, LinkedList<Batch>>();
   private TreeMap<String, Partner> _partnerLookup = new TreeMap<String, Partner>();
+  private LinkedList<Partner> _partners = new LinkedList<Partner>();
 
   // FIXME define constructor(s)
   // FIXME define methods
@@ -50,9 +51,9 @@ public class Warehouse implements Serializable {
     return _productLookup.get(id);
   }
 
-  public Partner lookupPartner(String name) throws NoSuchPartnerException {
-    if (!_partnerLookup.containsKey(name)) { throw new NoSuchPartnerException(name); }
-    return _partnerLookup.get(name);
+  public Partner lookupPartner(String id) throws NoSuchPartnerException {
+    if (!_partnerLookup.containsKey(id)) { throw new NoSuchPartnerException(id); }
+    return _partnerLookup.get(id);
   }
 
   public LinkedList<Product> listAllProducts() {
@@ -73,6 +74,19 @@ public class Warehouse implements Serializable {
     LinkedList<Batch> batchList = _batchesByProduct.get(product);
 
     return batchList;
+  }
+
+  public void registerNewPartner(String id, String name, String address) throws DuplicatePartnerException {
+    try {
+      lookupPartner(id);
+    } catch (NoSuchPartnerException e) {
+      Partner newPartner = new Partner(id, name, address);
+      _partners.add(newPartner);
+      _partnerLookup.put(id, newPartner);
+      return;
+    }
+
+    throw new DuplicatePartnerException(id);
   }
 
 
