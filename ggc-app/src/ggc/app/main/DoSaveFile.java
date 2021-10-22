@@ -7,6 +7,7 @@ import ggc.WarehouseManager;
 import ggc.exceptions.MissingFileAssociationException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import pt.tecnico.uilib.forms.Form;
 
 /**
  * Save current state to file under current name (if unnamed, query for name).
@@ -17,20 +18,20 @@ class DoSaveFile extends Command<WarehouseManager> {
   DoSaveFile(WarehouseManager receiver) {
     super(Label.SAVE, receiver);
 
-    addStringField("filename", Prompt.newSaveAs());
-
   }
 
   @Override
   public final void execute() throws CommandException {
-
-    _receiver.setFilename(stringField("filename"));
+    if (_receiver.missingFilename()) {
+      Form form = new Form();
+      _receiver.setFilename(form.requestString(Prompt.newSaveAs()));
+    }
 
     try {
       _receiver.saveAs(_receiver.getFilename());
     } catch (MissingFileAssociationException e) {}
     catch (FileNotFoundException e) {}
-    catch (IOException e) {};
+    catch (IOException e) {}
   }
 
 }

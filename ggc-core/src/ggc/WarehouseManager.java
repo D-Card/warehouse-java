@@ -16,9 +16,6 @@ public class WarehouseManager {
   /** The warehouse itself. */
   private Warehouse _warehouse = new Warehouse();
 
-  //FIXME define other attributes
-  //FIXME define constructor(s)
-  //FIXME define other methods
 
   public boolean missingFilename() { return _missingFilename; }
 
@@ -112,6 +109,7 @@ public class WarehouseManager {
       ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(filename)));
       _warehouse = (Warehouse) ois.readObject();
       ois.close();
+      _filename = filename;
     } catch (IOException e) { e.printStackTrace(); }
     catch (ClassNotFoundException e) { e.printStackTrace(); }
   }
