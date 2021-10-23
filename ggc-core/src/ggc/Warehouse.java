@@ -18,11 +18,11 @@ public class Warehouse implements Serializable {
   private double _contabilisticBalance = 0;
   private int _date = 0;
   private LinkedList<Product> _products = new LinkedList<Product>();
-  private TreeMap<String, Product> _productLookup = new TreeMap<String, Product>();
+  private HashMap<String, Product> _productLookup = new HashMap<String, Product>();
   private LinkedList<Batch> _batches = new LinkedList<Batch>();
-  private TreeMap<Partner, LinkedList<Batch>> _batchesByPartner = new TreeMap<Partner, LinkedList<Batch>>();
-  private TreeMap<Product, LinkedList<Batch>> _batchesByProduct = new TreeMap<Product, LinkedList<Batch>>();
-  private TreeMap<String, Partner> _partnerLookup = new TreeMap<String, Partner>();
+  private HashMap<Partner, LinkedList<Batch>> _batchesByPartner = new HashMap<Partner, LinkedList<Batch>>();
+  private HashMap<Product, LinkedList<Batch>> _batchesByProduct = new HashMap<Product, LinkedList<Batch>>();
+  private HashMap<String, Partner> _partnerLookup = new HashMap<String, Partner>();
   private LinkedList<Partner> _partners = new LinkedList<Partner>();
 
   // FIXME define constructor(s)
@@ -83,6 +83,7 @@ public class Warehouse implements Serializable {
       Partner newPartner = new Partner(id, name, address);
       _partners.add(newPartner);
       _partnerLookup.put(id, newPartner);
+      _batchesByPartner.put(newPartner, new LinkedList<Batch>());
       return;
     }
 
@@ -104,6 +105,9 @@ public class Warehouse implements Serializable {
       product = (SimpleProduct) lookupProduct(id);
     } catch (NoSuchProductException e) {
       product = new SimpleProduct(id);
+      _productLookup.put(id, product);
+      _batchesByProduct.put(product, new LinkedList<Batch>());
+      _products.add(product);
     }
 
     product.addStock(stock);
@@ -119,6 +123,9 @@ public class Warehouse implements Serializable {
       product = (DerivativeProduct) lookupProduct(id);
     } catch (NoSuchProductException e) {
       product = new DerivativeProduct(id, recipe, multiplier);
+      _productLookup.put(id, product);
+      _batchesByProduct.put(product, new LinkedList<Batch>());
+      _products.add(product);
     }
 
     product.addStock(stock);
