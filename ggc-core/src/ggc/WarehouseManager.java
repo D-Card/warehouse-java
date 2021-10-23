@@ -110,8 +110,10 @@ public class WarehouseManager {
       _warehouse = (Warehouse) ois.readObject();
       ois.close();
       _filename = filename;
-    } catch (IOException e) { e.printStackTrace(); }
-    catch (ClassNotFoundException e) { e.printStackTrace(); }
+      _missingFilename = false;
+    } catch (FileNotFoundException fnf) {throw new UnavailableFileException(filename);} 
+    catch (IOException | ClassNotFoundException e) { e.printStackTrace(); }
+    
   }
 
   /**
