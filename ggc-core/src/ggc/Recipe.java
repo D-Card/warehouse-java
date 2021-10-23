@@ -8,7 +8,7 @@ import ggc.exceptions.*;
 public class Recipe implements Serializable{
 
     private LinkedList<Product> _products = new LinkedList<Product>();
-    private TreeMap<Product, Integer> _productQuantities = new TreeMap<Product, Integer>();
+    private HashMap<Product, Integer> _productQuantities = new HashMap<Product, Integer>();
 
     public void addProduct(Product product, int quantity) {
         _products.add(product);
