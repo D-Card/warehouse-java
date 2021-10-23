@@ -141,13 +141,11 @@ public class Warehouse implements Serializable {
    * @throws BadEntryException
    */
   public void importFile(String txtfile) throws IOException, BadEntryException /* FIXME maybe other exceptions */ {
-
       try (BufferedReader in = new BufferedReader(new FileReader(txtfile))) {
         String s;
         while ((s = in.readLine()) != null) {
           String line = new String(s.getBytes(), "UTF-8");
-
-          String[] fields = line.split("|");
+          String[] fields = line.split("\\|");
           switch (fields[0]) {
             case "PARTNER" -> {
               try {registerNewPartner(fields[1], fields[2], fields[3]); }
