@@ -58,6 +58,6 @@ public class Batch implements Serializable{
 
     @Override
     public String toString() {
-        return getProduct().getId() + "|" + getPartner().getName() + "|" + getPrice() + "|" + getStock();
+        return getProduct().getId() + "|" + getPartner().getId() + "|" + (int)getPrice() + "|" + getStock();
     }
 }
