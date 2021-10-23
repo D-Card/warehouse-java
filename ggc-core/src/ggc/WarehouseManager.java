@@ -26,8 +26,8 @@ public class WarehouseManager {
 
   public String getFilename() { return _filename; }
 
-  public void requestDaysToAdvance(int days) throws NoSuchDateException {
-    _warehouse.advanceDays(days);
+  public void requestDateToAdvance(int days) throws NoSuchDateException {
+    _warehouse.advanceDate(days);
   }
 
   public double requestAvailableBalance() {

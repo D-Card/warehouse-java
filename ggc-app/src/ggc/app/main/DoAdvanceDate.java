@@ -22,7 +22,7 @@ class DoAdvanceDate extends Command<WarehouseManager> {
   public final void execute() throws CommandException {
     //FIXME implement command
     try {
-      _receiver.requestDaysToAdvance(integerField("days"));
+      _receiver.requestDateToAdvance(integerField("days"));
     } catch (NoSuchDateException e) {
         throw new InvalidDateException(e.getDate());
     }
