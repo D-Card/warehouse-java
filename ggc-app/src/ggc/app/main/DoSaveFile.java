@@ -29,9 +29,8 @@ class DoSaveFile extends Command<WarehouseManager> {
 
     try {
       _receiver.saveAs(_receiver.getFilename());
-    } catch (MissingFileAssociationException e) {}
-    catch (FileNotFoundException e) {}
-    catch (IOException e) {}
+    } catch (MissingFileAssociationException | FileNotFoundException e) {e.printStackTrace();}
+    catch (IOException e) {e.printStackTrace();}
   }
 
 }
