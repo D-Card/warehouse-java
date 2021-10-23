@@ -168,19 +168,28 @@ public class Warehouse implements Serializable {
 
             }
             case "BATCH_M" -> {
-              /*
+              String id = fields[1];
+              String partnerId = fields[2];
+              float price = Float.parseFloat(fields[3]);
+              int stock = Integer.parseInt(fields[4]);
+              float multiplier = Float.parseFloat(fields[5]);
+
               String[] recipeStrings = fields[6].split("#");
               Recipe recipe = new Recipe();
 
-              for(int i = 0; i < recipeStrings.size(); i++) {
-                String[] s = recipeStrings[i].split(":");
-                recipe.addProduct(lookupProduct(s[0]), s[1]);
+              for(int i = 0; i < recipeStrings.length; i++) {
+                String[] ss = recipeStrings[i].split(":");
+                try {
+                  recipe.addProduct(lookupProduct(ss[0]), Integer.parseInt(ss[1]));
+                } catch (NoSuchProductException e) {};
               }
 
-              DerivativeProduct product = registerProductDerivative(fields[1], recipe, field[5], fields[3], fields[4]);
-              Partner partner = lookupPartner(fields[2]);
-              registerNewBatch((Product) product, partner, fields[3], fields[4]);
-              */
+              DerivativeProduct product = registerProductDerivative(id, recipe, multiplier, price, stock);
+              try {
+                Partner partner = lookupPartner(partnerId);
+                registerNewBatch((Product) product, partner, price, stock);
+              } catch (NoSuchPartnerException e) {}
+
             }
             default -> throw new BadEntryException(fields[0]);
           }
