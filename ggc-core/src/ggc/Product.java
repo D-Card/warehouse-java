@@ -5,7 +5,7 @@ import java.io.*;
 import java.util.*;
 import ggc.exceptions.*;
 
-public abstract class Product {
+public abstract class Product implements Serializable{
 
     private String _id;
     private float _maxPrice = 0;

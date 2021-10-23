@@ -5,7 +5,7 @@ import java.io.*;
 import java.util.*;
 import ggc.exceptions.*;
 
-public class Recipe {
+public class Recipe implements Serializable{
 
     private LinkedList<Product> _products = new LinkedList<Product>();
     private TreeMap<Product, Integer> _productQuantities = new TreeMap<Product, Integer>();

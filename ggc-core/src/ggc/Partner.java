@@ -6,7 +6,7 @@ import java.util.*;
 import ggc.exceptions.*;
 import java.lang.Math;
 
-public class Partner {
+public class Partner implements Serializable{
 
     private String _name;
     private String _id;

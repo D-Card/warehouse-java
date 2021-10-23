@@ -5,7 +5,7 @@ import java.io.*;
 import java.util.*;
 import ggc.exceptions.*;
 
-public class Notification {
+public class Notification implements Serializable{
     private String _type;
     private Product _product;
     private float _price;

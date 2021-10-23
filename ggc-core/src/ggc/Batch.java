@@ -5,7 +5,7 @@ import java.io.*;
 import java.util.*;
 import ggc.exceptions.*;
 
-public class Batch {
+public class Batch implements Serializable{
 
     private float _price;
     private Product _product;
