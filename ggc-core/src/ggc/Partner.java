@@ -51,7 +51,7 @@ public class Partner implements Serializable{
         return _mailbox;
     }
 
-    public LinkedList<Notification> listAllNotifications() { return _mailbox.listAllNotifications(); }
+    public List<Notification> listAllNotifications() { return _mailbox.listAllNotifications(); }
 
     // Setters
     public void setName(String name) {
