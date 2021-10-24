@@ -37,7 +37,7 @@ public class Recipe implements Serializable{
             currentProduct = _products.get(i);
 
             if (i > 0) { currentString += "#"; }
-            currentString += currentProduct.getId() + "-" + getProductQuantity(currentProduct);
+            currentString += currentProduct.getId() + ":" + getProductQuantity(currentProduct);
         }
 
         return currentString;
