@@ -18,11 +18,11 @@ public class Warehouse implements Serializable {
   private double _contabilisticBalance = 0;
   private int _date = 0;
   private LinkedList<Product> _products = new LinkedList<Product>();
-  private HashMap<String, Product> _productLookup = new HashMap<String, Product>();
+  private TreeMap<String, Product> _productLookup = new TreeMap<String, Product>(String.CASE_INSENSITIVE_ORDER);
   private LinkedList<Batch> _batches = new LinkedList<Batch>();
   private HashMap<Partner, LinkedList<Batch>> _batchesByPartner = new HashMap<Partner, LinkedList<Batch>>();
   private HashMap<Product, LinkedList<Batch>> _batchesByProduct = new HashMap<Product, LinkedList<Batch>>();
-  private HashMap<String, Partner> _partnerLookup = new HashMap<String, Partner>();
+  private TreeMap<String, Partner> _partnerLookup = new TreeMap<String, Partner>(String.CASE_INSENSITIVE_ORDER);
   private LinkedList<Partner> _partners = new LinkedList<Partner>();
 
   // FIXME define constructor(s)
