@@ -6,7 +6,7 @@ import java.util.*;
 import ggc.exceptions.*;
 
 public class Mailbox implements Serializable{
-    private LinkedList<Notification> _notifications = new LinkedList<Notification>();
+    private List<Notification> _notifications = new ArrayList<Notification>();
 
-    public LinkedList<Notification> listAllNotifications() { return _notifications; }
+    public List<Notification> listAllNotifications() { return _notifications; }
 }
