@@ -17,13 +17,13 @@ public class Warehouse implements Serializable {
   private double _availableBalance = 0;
   private double _contabilisticBalance = 0;
   private int _date = 0;
-  private LinkedList<Product> _products = new LinkedList<Product>();
-  private TreeMap<String, Product> _productLookup = new TreeMap<String, Product>(String.CASE_INSENSITIVE_ORDER);
-  private LinkedList<Batch> _batches = new LinkedList<Batch>();
-  private HashMap<Partner, LinkedList<Batch>> _batchesByPartner = new HashMap<Partner, LinkedList<Batch>>();
-  private HashMap<Product, LinkedList<Batch>> _batchesByProduct = new HashMap<Product, LinkedList<Batch>>();
-  private TreeMap<String, Partner> _partnerLookup = new TreeMap<String, Partner>(String.CASE_INSENSITIVE_ORDER);
-  private LinkedList<Partner> _partners = new LinkedList<Partner>();
+  private List<Product> _products = new ArrayList<Product>();
+  private Map<String, Product> _productLookup = new TreeMap<String, Product>(String.CASE_INSENSITIVE_ORDER);
+  private List<Batch> _batches = new ArrayList<Batch>();
+  private Map<Partner, ArrayList<Batch>> _batchesByPartner = new HashMap<Partner, ArrayList<Batch>>();
+  private Map<Product, ArrayList<Batch>> _batchesByProduct = new HashMap<Product, ArrayList<Batch>>();
+  private Map<String, Partner> _partnerLookup = new TreeMap<String, Partner>(String.CASE_INSENSITIVE_ORDER);
+  private List<Partner> _partners = new ArrayList<Partner>();
 
   // FIXME define constructor(s)
   // FIXME define methods
@@ -56,23 +56,25 @@ public class Warehouse implements Serializable {
     return _partnerLookup.get(id);
   }
 
-  public LinkedList<Product> listAllProducts() {
+  public List<Product> listAllProducts() {
+    _products.sort(null);
     return _products;
   }
 
-  public LinkedList<Batch> listAllBatches() {
+  public List<Batch> listAllBatches() {
+    _batches.sort(null);
     return _batches;
   }
 
-  public LinkedList<Batch> listBatchesByPartner(Partner partner) {
-    LinkedList<Batch> batchList = _batchesByPartner.get(partner);
-
+  public List<Batch> listBatchesByPartner(Partner partner) {
+    List<Batch> batchList = _batchesByPartner.get(partner);
+    batchList.sort(null);
     return batchList;
   }
 
-  public LinkedList<Batch> listBatchesByProduct(Product product) {
-    LinkedList<Batch> batchList = _batchesByProduct.get(product);
-
+  public List<Batch> listBatchesByProduct(Product product) {
+    List<Batch> batchList = _batchesByProduct.get(product);
+    batchList.sort(null);
     return batchList;
   }
 
@@ -83,18 +85,18 @@ public class Warehouse implements Serializable {
       Partner newPartner = new Partner(id, name, address);
       _partners.add(newPartner);
       _partnerLookup.put(id, newPartner);
-      _batchesByPartner.put(newPartner, new LinkedList<Batch>());
+      _batchesByPartner.put(newPartner, new ArrayList<Batch>());
       return;
     }
 
     throw new DuplicatePartnerException(id);
   }
 
-  public LinkedList<Notification> listPartnerNotifications(Partner partner) {
+  public List<Notification> listPartnerNotifications(Partner partner) {
     return partner.listAllNotifications();
   }
 
-  public LinkedList<Partner> listAllPartners() {
+  public List<Partner> listAllPartners() {
     return _partners;
   }
 
@@ -106,7 +108,7 @@ public class Warehouse implements Serializable {
     } catch (NoSuchProductException e) {
       product = new SimpleProduct(id);
       _productLookup.put(id, product);
-      _batchesByProduct.put(product, new LinkedList<Batch>());
+      _batchesByProduct.put(product, new ArrayList<Batch>());
       _products.add(product);
     }
 
@@ -124,7 +126,7 @@ public class Warehouse implements Serializable {
     } catch (NoSuchProductException e) {
       product = new DerivativeProduct(id, recipe, multiplier);
       _productLookup.put(id, product);
-      _batchesByProduct.put(product, new LinkedList<Batch>());
+      _batchesByProduct.put(product, new ArrayList<Batch>());
       _products.add(product);
     }
 
