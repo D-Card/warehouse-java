@@ -12,6 +12,5 @@ git clone https://github.com/D-Card/warehouse-java.git
 ```
 2. Compile and run the code
 ```
-cd warehouse-java
-make
+make -C warehouse-java
 ```
