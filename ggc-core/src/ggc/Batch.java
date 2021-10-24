@@ -5,7 +5,7 @@ import java.io.*;
 import java.util.*;
 import ggc.exceptions.*;
 
-public class Batch implements Serializable{
+public class Batch implements Serializable, Comparable<Batch>{
 
     private float _price;
     private Product _product;
@@ -59,5 +59,15 @@ public class Batch implements Serializable{
     @Override
     public String toString() {
         return getProduct().getId() + "|" + getPartner().getId() + "|" + (int)getPrice() + "|" + getStock();
+    }
+
+    @Override
+    public int compareTo(Batch batch) {
+        int signProduct = _product.getId().compareTo(batch.getProduct().getId());
+        int signPartner = _partner.getId().compareTo(batch.getPartner().getId());
+        if (signProduct != 0) return signProduct;
+        if (signPartner != 0) return signPartner;
+        if (_price != batch.getPrice()) return (int)(_price - batch.getPrice());
+        return 0;
     }
 }
