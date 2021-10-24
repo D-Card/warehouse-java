@@ -4,6 +4,10 @@ import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
 import ggc.WarehouseManager;
 //FIXME import classes
+import ggc.exceptions.MissingFileAssociationException;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import pt.tecnico.uilib.forms.Form;
 
 /**
  * Save current state to file under current name (if unnamed, query for name).
@@ -13,12 +17,20 @@ class DoSaveFile extends Command<WarehouseManager> {
   /** @param receiver */
   DoSaveFile(WarehouseManager receiver) {
     super(Label.SAVE, receiver);
-    //FIXME maybe add command fields
+
   }
 
   @Override
   public final void execute() throws CommandException {
-    //FIXME implement command
+    if (_receiver.missingFilename()) {
+      Form form = new Form();
+      _receiver.setFilename(form.requestString(Prompt.newSaveAs()));
+    }
+
+    try {
+      _receiver.saveAs(_receiver.getFilename());
+    } catch (MissingFileAssociationException | FileNotFoundException e) {e.printStackTrace();}
+    catch (IOException e) {e.printStackTrace();}
   }
 
 }

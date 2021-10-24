@@ -2,6 +2,7 @@ package ggc;
 
 //FIXME import classes (cannot import from pt.tecnico or ggc.app)
 import java.io.*;
+import java.util.*;
 import ggc.exceptions.*;
 
 /** Façade for access. */
@@ -10,19 +11,67 @@ public class WarehouseManager {
   /** Name of file storing current store. */
   private String _filename = "";
 
+  private boolean _missingFilename = true;
+
   /** The warehouse itself. */
   private Warehouse _warehouse = new Warehouse();
 
-  //FIXME define other attributes
-  //FIXME define constructor(s)
-  //FIXME define other methods
 
-  public void requestDaysToAdvance(int days) throws NoSuchDateException {
-    _warehouse.advanceDays(days);
+  public boolean missingFilename() { return _missingFilename; }
+
+  public void setFilename(String filename) {
+    _filename = filename;
+    _missingFilename = false;
   }
 
-  public int displayDate(){
+  public String getFilename() { return _filename; }
+
+  public void requestDateToAdvance(int days) throws NoSuchDateException {
+    _warehouse.advanceDate(days);
+  }
+
+  public double requestAvailableBalance() {
+    return _warehouse.getAvailableBalance();
+  }
+
+  public double requestContabilisticBalance() {
+    return _warehouse.getContabilisticBalance();
+  }
+
+  public int requestDate(){
     return _warehouse.getDate();
+  }
+
+  public LinkedList<Product> requestListAllProducts() {
+    return _warehouse.listAllProducts();
+  }
+
+  public LinkedList<Batch> requestListAllBatches() {
+    return _warehouse.listAllBatches();
+  }
+
+  public LinkedList<Batch> requestListBatchesByProduct(String id) throws NoSuchProductException {
+    return _warehouse.listBatchesByProduct(_warehouse.lookupProduct(id));
+  }
+
+  public LinkedList<Batch> requestListBatchesByPartner(String id) throws NoSuchPartnerException {
+    return _warehouse.listBatchesByPartner(_warehouse.lookupPartner(id));
+  }
+
+  public void requestRegisterPartner(String id, String name, String address) throws DuplicatePartnerException {
+    _warehouse.registerNewPartner(id, name, address);
+  }
+
+  public LinkedList<Partner> requestListAllPartners () {
+    return _warehouse.listAllPartners();
+  }
+
+  public Partner requestShowPartner(String id) throws NoSuchPartnerException {
+    return _warehouse.lookupPartner(id);
+  }
+
+  public LinkedList<Notification> requestListPartnerNotifications(String id) throws NoSuchPartnerException {
+    return _warehouse.listPartnerNotifications(_warehouse.lookupPartner(id));
   }
 
   /**
@@ -31,7 +80,13 @@ public class WarehouseManager {
    * @@throws MissingFileAssociationException
    */
   public void save() throws IOException, FileNotFoundException, MissingFileAssociationException {
-    //FIXME implement serialization method
+    try {
+      ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(_filename)));
+      oos.writeObject(_warehouse);
+      oos.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   /**
@@ -50,7 +105,15 @@ public class WarehouseManager {
    * @@throws UnavailableFileException
    */
   public void load(String filename) throws UnavailableFileException {
-    //FIXME implement serialization method
+    try {
+      ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(filename)));
+      _warehouse = (Warehouse) ois.readObject();
+      ois.close();
+      _filename = filename;
+      _missingFilename = false;
+    } catch (FileNotFoundException fnf) {throw new UnavailableFileException(filename);} 
+    catch (IOException | ClassNotFoundException e) { e.printStackTrace(); }
+    
   }
 
   /**
