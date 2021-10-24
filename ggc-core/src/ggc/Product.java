@@ -5,7 +5,7 @@ import java.io.*;
 import java.util.*;
 import ggc.exceptions.*;
 
-public abstract class Product implements Serializable{
+public abstract class Product implements Serializable, Comparable<Product>{
 
     private String _id;
     private float _maxPrice = 0;
@@ -42,4 +42,8 @@ public abstract class Product implements Serializable{
         _stock += stock;
     }
 
+    @Override
+    public int compareTo(Product product) {
+        return _id.compareTo(product.getId());
+    }
 }
