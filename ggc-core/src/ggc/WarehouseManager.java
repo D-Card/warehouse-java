@@ -19,11 +19,6 @@ public class WarehouseManager {
 
   public boolean missingFilename() { return _missingFilename; }
 
-  public void setFilename(String filename) {
-    _filename = filename;
-    _missingFilename = false;
-  }
-
   public String getFilename() { return _filename; }
 
   public void requestDateToAdvance(int days) throws NoSuchDateException {
@@ -80,13 +75,11 @@ public class WarehouseManager {
    * @@throws MissingFileAssociationException
    */
   public void save() throws IOException, FileNotFoundException, MissingFileAssociationException {
-    try {
-      ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(_filename)));
-      oos.writeObject(_warehouse);
-      oos.close();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    if (!_filename.equals("")) _missingFilename = false;
+    if (missingFilename()) {throw new MissingFileAssociationException();}
+    ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(_filename)));
+    oos.writeObject(_warehouse);
+    oos.close();
   }
 
   /**

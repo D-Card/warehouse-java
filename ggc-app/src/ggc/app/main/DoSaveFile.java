@@ -17,20 +17,20 @@ class DoSaveFile extends Command<WarehouseManager> {
   /** @param receiver */
   DoSaveFile(WarehouseManager receiver) {
     super(Label.SAVE, receiver);
-
   }
 
   @Override
   public final void execute() throws CommandException {
-    if (_receiver.missingFilename()) {
-      Form form = new Form();
-      _receiver.setFilename(form.requestString(Prompt.newSaveAs()));
-    }
-
     try {
-      _receiver.saveAs(_receiver.getFilename());
-    } catch (MissingFileAssociationException | FileNotFoundException e) {e.printStackTrace();}
-    catch (IOException e) {e.printStackTrace();}
+      try {
+        _receiver.save();
+      } catch (MissingFileAssociationException e) {newSaveAs();} 
+    } catch (IOException e) {e.printStackTrace();}
   }
 
+  public void newSaveAs() throws IOException{
+    try {
+      _receiver.saveAs(Form.requestString(Prompt.newSaveAs()));
+    } catch (FileNotFoundException | MissingFileAssociationException e) {newSaveAs();}
+  }
 }
