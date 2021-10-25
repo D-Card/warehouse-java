@@ -150,7 +150,7 @@ public class Warehouse implements Serializable {
    * @throws BadEntryException
    */
   public void importFile(String txtfile) throws IOException, BadEntryException, DuplicatePartnerException, NoSuchPartnerException, NoSuchProductException, BadEntryException {
-    BufferedReader in = new BufferedReader(new FileReader(txtfile))
+    BufferedReader in = new BufferedReader(new FileReader(txtfile));
     String s;
     while ((s = in.readLine()) != null) {
       String line = new String(s.getBytes(), "UTF-8");
