@@ -97,6 +97,7 @@ public class Warehouse implements Serializable {
   }
 
   public List<Partner> listAllPartners() {
+    _partners.sort(null);
     return _partners;
   }
 
