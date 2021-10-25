@@ -6,7 +6,7 @@ import java.util.*;
 import ggc.exceptions.*;
 import java.lang.Math;
 
-public class Partner implements Serializable{
+public class Partner implements Serializable, Comparable<Partner>{
 
     private String _name;
     private String _id;
@@ -83,4 +83,8 @@ public class Partner implements Serializable{
         return _id + "|" + _name + "|" + _address + "|" + _status + "|" + Math.round(_points) + "|" + Math.round(_buyTotalValue) + "|" + Math.round(_sellTotalValue) + "|" + Math.round(_sellPaidValue);
     }
 
+    @Override
+    public int compareTo(Partner partner) {
+        return _id.compareTo(partner.getId());
+    }
 }
