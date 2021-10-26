@@ -148,34 +148,18 @@ public class Warehouse implements Serializable {
   }
 
   /**
-   * @@param partner partner whose notifications are to be listed
-   * @@return list of all selected partner's notifications
-   */
-  public List<Notification> listPartnerNotifications(Partner partner) {
-    return partner.listAllNotifications();
-  }
-
-  /**
-   * @@return sorted list of all partners
-   */
-  public List<Partner> listAllPartners() {
-    _partners.sort(null);
-    return _partners;
-  }
-
-  /**
    * @@param id   product's id
    * @@param price product's price
    * @@param stock product's stock
    * @@param return registered product
    */
-  public SimpleProduct registerProductSimple(String id, float price, int stock) {
-    SimpleProduct product;
+  public ProductSimple registerProductSimple(String id, float price, int stock) {
+    ProductSimple product;
 
     try {
-      product = (SimpleProduct) lookupProduct(id);
+      product = (ProductSimple) lookupProduct(id);
     } catch (NoSuchProductException e) {
-      product = new SimpleProduct(id);
+      product = new ProductSimple(id);
       _productLookup.put(id, product);
       _batchesByProduct.put(product, new ArrayList<Batch>());
       _products.add(product);
@@ -195,13 +179,13 @@ public class Warehouse implements Serializable {
    * @@param stock product's stock
    * @@return registered product
    */
-  public DerivativeProduct registerProductDerivative(String id, Recipe recipe, float multiplier, float price, int stock) {
-    DerivativeProduct product;
+  public ProductDerivative registerProductDerivative(String id, Recipe recipe, float multiplier, float price, int stock) {
+    ProductDerivative product;
 
     try {
-      product = (DerivativeProduct) lookupProduct(id);
+      product = (ProductDerivative) lookupProduct(id);
     } catch (NoSuchProductException e) {
-      product = new DerivativeProduct(id, recipe, multiplier);
+      product = new ProductDerivative(id, recipe, multiplier);
       _productLookup.put(id, product);
       _batchesByProduct.put(product, new ArrayList<Batch>());
       _products.add(product);
@@ -253,7 +237,7 @@ public class Warehouse implements Serializable {
           float price = Float.parseFloat(fields[3]);
           int stock = Integer.parseInt(fields[4]);
 
-          SimpleProduct product = registerProductSimple(id, price, stock);
+          ProductSimple product = registerProductSimple(id, price, stock);
           Partner partner = lookupPartner(partnerId);
           registerNewBatch(product, partner, price, stock);
 
@@ -273,7 +257,7 @@ public class Warehouse implements Serializable {
             recipe.addProduct(lookupProduct(ss[0]), Integer.parseInt(ss[1]));
           }
 
-          DerivativeProduct product = registerProductDerivative(id, recipe, multiplier, price, stock);
+          ProductDerivative product = registerProductDerivative(id, recipe, multiplier, price, stock);
           Partner partner = lookupPartner(partnerId);
           registerNewBatch((Product) product, partner, price, stock);
         }

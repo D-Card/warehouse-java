@@ -5,12 +5,12 @@ import java.io.*;
 import java.util.*;
 import ggc.exceptions.*;
 
-public class DerivativeProduct extends Product {
+public class ProductDerivative extends Product {
 
     private Recipe _recipe;
     private float _multiplier;
 
-    public DerivativeProduct(String id, Recipe recipe, float multiplier) {
+    public ProductDerivative(String id, Recipe recipe, float multiplier) {
         setId(id);
         _recipe = recipe;
         _multiplier = multiplier;

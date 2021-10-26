@@ -5,9 +5,9 @@ import java.io.*;
 import java.util.*;
 import ggc.exceptions.*;
 
-public class SimpleProduct extends Product {
+public class ProductSimple extends Product {
 
-    public SimpleProduct(String id) {
+    public ProductSimple(String id) {
         setId(id);
     }
 
