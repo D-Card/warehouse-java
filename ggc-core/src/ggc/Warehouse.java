@@ -13,7 +13,6 @@ public class Warehouse implements Serializable {
   /** Serial number for serialization. */
   private static final long serialVersionUID = 202109192006L;
 
-  // FIXME define attributes
   private double _availableBalance = 0;
   private double _contabilisticBalance = 0;
   private int _date = 0;
@@ -25,15 +24,7 @@ public class Warehouse implements Serializable {
   private Map<String, Partner> _partnerLookup = new TreeMap<String, Partner>(String.CASE_INSENSITIVE_ORDER);
   private List<Partner> _partners = new ArrayList<Partner>();
 
-  // FIXME define constructor(s)
-  // FIXME define methods
-
-  public void advanceDate(int days) throws NoSuchDateException {
-    if (days > 0) 
-      _date += days;
-    else throw new NoSuchDateException(days);
-  }
-
+  // Getters
   public int getDate() {
     return _date;
   }
@@ -46,38 +37,78 @@ public class Warehouse implements Serializable {
     return _contabilisticBalance;
   }
 
+  /**
+   * @@param days number of days to advance
+   * @@throws NoSuchDateException
+   */
+  public void advanceDate(int days) throws NoSuchDateException {
+    if (days > 0) 
+      _date += days;
+    else throw new NoSuchDateException(days);
+  }
+
+  /**
+   * @@param id product's id
+   * @@return product
+   * @@throws NoSuchProductException
+   */
   public Product lookupProduct(String id) throws NoSuchProductException {
     if (!_productLookup.containsKey(id)) { throw new NoSuchProductException(id); }
     return _productLookup.get(id);
   }
 
+  /**
+   * @@param id partner's id
+   * @@return partner
+   * @@throws NoSuchProductException
+   */
   public Partner lookupPartner(String id) throws NoSuchPartnerException {
     if (!_partnerLookup.containsKey(id)) { throw new NoSuchPartnerException(id); }
     return _partnerLookup.get(id);
   }
 
+  /**
+   * @@return sorted list of all products
+   */
   public List<Product> listAllProducts() {
     _products.sort(null);
     return _products;
   }
 
+  /**
+   * @@return sorted list of all batches
+   */
   public List<Batch> listAllBatches() {
     _batches.sort(null);
     return _batches;
   }
 
+  /**
+   * @@param partner partner whose batches are to be listed
+   * @@return sorted list of partner's batches
+   */
   public List<Batch> listBatchesByPartner(Partner partner) {
     List<Batch> batchList = _batchesByPartner.get(partner);
     batchList.sort(null);
     return batchList;
   }
 
+  /**
+   * @@param product product which batches are to be listed
+   * @@return sorted list of batches
+   */
   public List<Batch> listBatchesByProduct(Product product) {
     List<Batch> batchList = _batchesByProduct.get(product);
     batchList.sort(null);
     return batchList;
   }
 
+  /**
+   * @@param id partners's id
+   * @@param name partner's name
+   * @@param address partner's address
+   * @@throws DuplicatePartnerException
+   */
   public void registerNewPartner(String id, String name, String address) throws DuplicatePartnerException {
     try {
       lookupPartner(id);
@@ -92,15 +123,28 @@ public class Warehouse implements Serializable {
     throw new DuplicatePartnerException(id);
   }
 
+  /**
+   * @@param partner partner whose notifications are to be listed
+   * @@return list of all selected partner's notifications
+   */
   public List<Notification> listPartnerNotifications(Partner partner) {
     return partner.listAllNotifications();
   }
 
+  /**
+   * @@return sorted list of all partners
+   */
   public List<Partner> listAllPartners() {
     _partners.sort(null);
     return _partners;
   }
 
+  /**
+   * @@param id   product's id
+   * @@param price product's price
+   * @@param stock product's stock
+   * @@param return registered product
+   */
   public SimpleProduct registerProductSimple(String id, float price, int stock) {
     SimpleProduct product;
 
@@ -119,6 +163,14 @@ public class Warehouse implements Serializable {
     return product;
   }
 
+  /**
+   * @@param id product's id
+   * @@param recipe product's recipe
+   * @@param multiplier product's multiplier
+   * @@param price product's price
+   * @@param stock product's stock
+   * @@return registered product
+   */
   public DerivativeProduct registerProductDerivative(String id, Recipe recipe, float multiplier, float price, int stock) {
     DerivativeProduct product;
 
@@ -137,6 +189,13 @@ public class Warehouse implements Serializable {
     return product;
   }
 
+  /**
+   * @@param product product associated with batch
+   * @@param partner partner associated with batch
+   * @@param price product's price
+   * @@param stock product's stock
+   * @@throws UnavailableFileException
+   */
   public void registerNewBatch(Product product, Partner partner, float price, int stock) {
     Batch batch = new Batch(product, partner, price, stock);
 
@@ -149,8 +208,11 @@ public class Warehouse implements Serializable {
    * @param txtfile filename to be loaded.
    * @throws IOException
    * @throws BadEntryException
+   * @throws DuplicatePartnerException
+   * @throws NoSuchPartnerExceprion
+   * @throws NoSuchProductException
    */
-  public void importFile(String txtfile) throws IOException, BadEntryException, DuplicatePartnerException, NoSuchPartnerException, NoSuchProductException, BadEntryException {
+  public void importFile(String txtfile) throws IOException, BadEntryException, DuplicatePartnerException, NoSuchPartnerException, NoSuchProductException {
     BufferedReader in = new BufferedReader(new FileReader(txtfile));
     String s;
     while ((s = in.readLine()) != null) {
