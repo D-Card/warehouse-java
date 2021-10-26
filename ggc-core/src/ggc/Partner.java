@@ -8,6 +8,8 @@ import java.lang.Math;
 
 public class Partner implements Serializable, Comparable<Partner>{
 
+    private static final long serialVersionUID = 202110262342L;
+
     private String _name;
     private String _id;
     private String _address;

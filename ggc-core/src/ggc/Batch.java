@@ -7,6 +7,8 @@ import ggc.exceptions.*;
 
 public class Batch implements Serializable, Comparable<Batch>{
 
+    private static final long serialVersionUID = 202110262339L;
+
     private float _price;
     private Product _product;
     private int _stock;

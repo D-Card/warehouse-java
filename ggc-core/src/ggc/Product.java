@@ -7,6 +7,8 @@ import ggc.exceptions.*;
 
 public abstract class Product implements Serializable, Comparable<Product>{
 
+    private static final long serialVersionUID = 202110262343L;
+
     private String _id;
     private float _maxPrice = 0;
     private int _stock = 0;

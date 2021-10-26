@@ -7,6 +7,8 @@ import ggc.exceptions.*;
 
 public class Recipe implements Serializable{
 
+    private static final long serialVersionUID = 202110262344L;
+
     private List<Product> _products = new ArrayList<Product>();
     private Map<Product, Integer> _productQuantities = new HashMap<Product, Integer>();
 
