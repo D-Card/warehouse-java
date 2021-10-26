@@ -36,7 +36,7 @@ public class ProductDerivative extends Product {
 
     @Override
     public String toString() {
-        return getId() + "|" + (int)getMaxPrice() + "|" + getStock() + "|" + _multiplier + "|" + _recipe.toString();
+        return getId() + "|" + Math.round(getMaxPrice()) + "|" + getStock() + "|" + _multiplier + "|" + _recipe.toString();
     }
 
 }

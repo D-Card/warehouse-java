@@ -13,7 +13,7 @@ public class ProductSimple extends Product {
 
     @Override
     public String toString() {
-        return getId() + "|" + (int)getMaxPrice() + "|" + getStock();
+        return getId() + "|" + Math.round(getMaxPrice()) + "|" + getStock();
     }
 
 }
