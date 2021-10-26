@@ -25,14 +25,22 @@ public class Warehouse implements Serializable {
   private List<Partner> _partners = new ArrayList<Partner>();
 
   // Getters
+  /**
+   * @@return warehouse's date
+   */
   public int getDate() {
     return _date;
   }
-
+  /**
+   * @@return warehouse's available balance
+   */
   public double getAvailableBalance() {
     return _availableBalance;
   }
 
+  /**
+   * @@return warehouse's contabilistic balance
+   */
   public double getContabilisticBalance() {
     return _contabilisticBalance;
   }
@@ -101,6 +109,22 @@ public class Warehouse implements Serializable {
     List<Batch> batchList = _batchesByProduct.get(product);
     batchList.sort(null);
     return batchList;
+  }
+
+  /**
+   * @@param partner partner whose notifications are to be listed
+   * @@return list of all selected partner's notifications
+   */
+  public List<Notification> listPartnerNotifications(Partner partner) {
+    return partner.listAllNotifications();
+  }
+
+  /**
+   * @@return sorted list of all partners
+   */
+  public List<Partner> listAllPartners() {
+    _partners.sort(null);
+    return _partners;
   }
 
   /**
