@@ -2,6 +2,8 @@ package ggc;
 
 import java.io.*;
 import java.util.*;
+import java.text.Collator;
+import java.util.Locale;
 import ggc.exceptions.*;
 
 public abstract class Product implements Serializable, Comparable<Product>{
@@ -45,6 +47,6 @@ public abstract class Product implements Serializable, Comparable<Product>{
 
     @Override
     public int compareTo(Product product) {
-        return _id.compareTo(product.getId());
+        return Collator.getInstance(Locale.getDefault()).compare(_id, product.getId());
     }
 }

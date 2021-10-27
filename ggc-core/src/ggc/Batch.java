@@ -2,6 +2,8 @@ package ggc;
 
 import java.io.*;
 import java.util.*;
+import java.text.Collator;
+import java.util.Locale;
 import ggc.exceptions.*;
 
 public class Batch implements Serializable, Comparable<Batch>{
@@ -64,8 +66,8 @@ public class Batch implements Serializable, Comparable<Batch>{
 
     @Override
     public int compareTo(Batch batch) {
-        int signProduct = _product.getId().compareTo(batch.getProduct().getId());
-        int signPartner = _partner.getId().compareTo(batch.getPartner().getId());
+        int signProduct = Collator.getInstance(Locale.getDefault()).compare(_product.getId(), batch.getProduct().getId());
+        int signPartner = Collator.getInstance(Locale.getDefault()).compare(_partner.getId(), batch.getPartner().getId());
         if (signProduct != 0) return signProduct;
         if (signPartner != 0) return signPartner;
         if (_price != batch.getPrice()) return (int)(_price - batch.getPrice());
