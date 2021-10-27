@@ -1,4 +1,4 @@
-package ggc;
+package ggc.transactions;
 
 import java.io.*;
 import java.util.*;

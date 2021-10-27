@@ -1,4 +1,4 @@
-package ggc;
+package ggc.partners;
 
 import java.io.*;
 import java.util.*;

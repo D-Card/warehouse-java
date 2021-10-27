@@ -1,8 +1,10 @@
-package ggc;
+package ggc.partners;
 
 import java.io.*;
 import java.util.*;
 import ggc.exceptions.*;
+import ggc.products.*;
+
 
 public class Notification implements Serializable{
 

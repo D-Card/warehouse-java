@@ -4,6 +4,9 @@ package ggc;
 import java.io.*;
 import java.util.*;
 import ggc.exceptions.*;
+import ggc.partners.*;
+import ggc.products.*;
+import ggc.transactions.*;
 
 /**
  * Class Warehouse implements a warehouse.

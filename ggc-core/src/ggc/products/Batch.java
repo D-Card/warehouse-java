@@ -1,10 +1,11 @@
-package ggc;
+package ggc.products;
 
 import java.io.*;
 import java.util.*;
 import java.text.Collator;
 import java.util.Locale;
 import ggc.exceptions.*;
+import ggc.partners.*;
 
 public class Batch implements Serializable, Comparable<Batch>{
 

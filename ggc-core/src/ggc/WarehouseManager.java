@@ -3,6 +3,9 @@ package ggc;
 import java.io.*;
 import java.util.*;
 import ggc.exceptions.*;
+import ggc.partners.*;
+import ggc.products.*;
+import ggc.transactions.*;
 
 /** Façade for access. */
 public class WarehouseManager {
