@@ -11,6 +11,7 @@ public class WarehouseManager {
   private String _filename = "";
 
   private boolean _missingFilename = true;
+  private boolean _updated = true;
 
   /** The warehouse itself. */
   private Warehouse _warehouse = new Warehouse();
@@ -22,6 +23,7 @@ public class WarehouseManager {
 
   public void requestDateToAdvance(int days) throws NoSuchDateException {
     _warehouse.advanceDate(days);
+    _updated = true;
   }
 
   public double requestAvailableBalance() {
@@ -54,6 +56,7 @@ public class WarehouseManager {
 
   public void requestRegisterPartner(String id, String name, String address) throws DuplicatePartnerException {
     _warehouse.registerNewPartner(id, name, address);
+    _updated = true;
   }
 
   public List<Partner> requestListAllPartners () {
@@ -76,9 +79,12 @@ public class WarehouseManager {
   public void save() throws IOException, FileNotFoundException, MissingFileAssociationException {
     if (!_filename.equals("")) _missingFilename = false;
     if (missingFilename()) {throw new MissingFileAssociationException();}
-    ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(_filename)));
-    oos.writeObject(_warehouse);
-    oos.close();
+    if (_updated == true) {
+      ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(_filename)));
+      oos.writeObject(_warehouse);
+      oos.close();
+      _updated = false;
+    }  
   }
 
   /**
@@ -103,6 +109,7 @@ public class WarehouseManager {
       ois.close();
       _filename = filename;
       _missingFilename = false;
+      _updated = false;
     } catch (FileNotFoundException fnf) {throw new UnavailableFileException(filename);} 
     catch (IOException | ClassNotFoundException e) { e.printStackTrace(); }
     
@@ -115,6 +122,7 @@ public class WarehouseManager {
   public void importFile(String textfile) throws ImportFileException {
     try {
 	    _warehouse.importFile(textfile);
+      _updated = true;
     } catch (IOException | BadEntryException | DuplicatePartnerException | NoSuchPartnerException | NoSuchProductException e) {
 	      throw new ImportFileException(textfile);
     }
