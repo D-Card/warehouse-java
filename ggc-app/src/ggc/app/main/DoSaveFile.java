@@ -3,7 +3,7 @@ package ggc.app.main;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
 import ggc.WarehouseManager;
-//FIXME import classes
+
 import ggc.exceptions.MissingFileAssociationException;
 import java.io.FileNotFoundException;
 import java.io.IOException;

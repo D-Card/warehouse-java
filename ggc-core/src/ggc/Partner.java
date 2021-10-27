@@ -1,10 +1,8 @@
 package ggc;
 
-// FIXME import classes (cannot import from pt.tecnico or ggc.app)
 import java.io.*;
 import java.util.*;
 import ggc.exceptions.*;
-import java.lang.Math;
 
 public class Partner implements Serializable, Comparable<Partner>{
 

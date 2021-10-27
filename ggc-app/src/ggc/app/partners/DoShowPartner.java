@@ -3,7 +3,6 @@ package ggc.app.partners;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
 import ggc.WarehouseManager;
-//FIXME import classes
 import ggc.exceptions.NoSuchPartnerException;
 import ggc.app.exceptions.UnknownPartnerKeyException;
 

@@ -3,7 +3,6 @@ package ggc.app.products;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
 import ggc.WarehouseManager;
-//FIXME import classes
 import ggc.exceptions.NoSuchPartnerException;
 import ggc.app.exceptions.UnknownPartnerKeyException;
 
@@ -19,7 +18,6 @@ class DoShowBatchesByPartner extends Command<WarehouseManager> {
 
   @Override
   public final void execute() throws CommandException {
-    //FIXME implement command
     try {
       _display.popup(_receiver.requestListBatchesByPartner(stringField("partner")));
     } catch (NoSuchPartnerException e) {
