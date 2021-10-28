@@ -2,6 +2,8 @@ package ggc.partners;
 
 import java.io.*;
 import java.util.*;
+import java.text.Collator;
+import java.util.Locale;
 import ggc.exceptions.*;
 
 public class Partner implements Serializable, Comparable<Partner>{
@@ -85,6 +87,7 @@ public class Partner implements Serializable, Comparable<Partner>{
 
     @Override
     public int compareTo(Partner partner) {
-        return _id.compareTo(partner.getId());
+        Collator collator = Collator.getInstance(Locale.getDefault());
+        return collator.compare(_id, partner.getId());
     }
 }

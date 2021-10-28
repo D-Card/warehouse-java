@@ -47,6 +47,7 @@ public abstract class Product implements Serializable, Comparable<Product>{
 
     @Override
     public int compareTo(Product product) {
-        return Collator.getInstance(Locale.getDefault()).compare(_id, product.getId());
+        Collator collator = Collator.getInstance(Locale.getDefault());
+        return collator.compare(_id, product.getId());
     }
 }
