@@ -84,7 +84,7 @@ public class Warehouse implements Serializable {
    */
   public List<Product> listAllProducts() {
     _products.sort(null);
-    return _products;
+    return Collections.unmodifiableList(_products);
   }
 
   /**
@@ -92,7 +92,7 @@ public class Warehouse implements Serializable {
    */
   public List<Batch> listAllBatches() {
     _batches.sort(null);
-    return _batches;
+    return Collections.unmodifiableList(_batches);
   }
 
   /**
@@ -102,7 +102,7 @@ public class Warehouse implements Serializable {
   public List<Batch> listBatchesByPartner(Partner partner) {
     List<Batch> batchList = _batchesByPartner.get(partner);
     batchList.sort(null);
-    return batchList;
+    return Collections.unmodifiableList(batchList);
   }
 
   /**
@@ -112,7 +112,7 @@ public class Warehouse implements Serializable {
   public List<Batch> listBatchesByProduct(Product product) {
     List<Batch> batchList = _batchesByProduct.get(product);
     batchList.sort(null);
-    return batchList;
+    return Collections.unmodifiableList(batchList);
   }
 
   /**
@@ -120,7 +120,7 @@ public class Warehouse implements Serializable {
    * @@return list of all selected partner's notifications
    */
   public List<Notification> listPartnerNotifications(Partner partner) {
-    return partner.listAllNotifications();
+    return Collections.unmodifiableList(partner.listAllNotifications());
   }
 
   /**
@@ -128,7 +128,7 @@ public class Warehouse implements Serializable {
    */
   public List<Partner> listAllPartners() {
     _partners.sort(null);
-    return _partners;
+    return Collections.unmodifiableList(_partners);
   }
 
   /**
