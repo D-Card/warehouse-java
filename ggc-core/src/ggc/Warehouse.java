@@ -196,6 +196,19 @@ public class Warehouse implements Serializable {
     return product;
   }
 
+  public Set<Batch> listBatchesUnderGivenPrice(float price) {
+    Set<Batch> batchSet = new TreeSet<Batch>();
+    Iterator it = _batches.iterator();
+    Batch b;
+
+    while (it.hasNext()) {
+      b = (Batch) it.next();
+      if (b.getPrice() < price) batchSet.add(b);
+    }
+
+    return batchSet;
+  }
+
   /**
    * @@param product product associated with batch
    * @@param partner partner associated with batch
