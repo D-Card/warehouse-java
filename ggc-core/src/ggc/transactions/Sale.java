@@ -11,17 +11,17 @@ public class Sale extends Transaction implements Serializable {
 
     private float _baseValue;
     private float _realValue;
-    private int _limitDate;
+    private int _deadline;
     private int _paidDate = -1;
 
-    public Sale(int id, Partner partner, Product product, int amount, float baseValue, float realValue, int limitDate) {
+    public Sale(int id, Partner partner, Product product, int amount, float baseValue, float realValue, int deadline) {
         setId(id);
         setPartner(partner);
         setProduct(product);
         setAmount(amount);
         _baseValue = baseValue;
         _realValue = realValue;
-        _limitDate = limitDate;
+        _deadline = deadline;
     }
 
     //Getters
@@ -34,7 +34,7 @@ public class Sale extends Transaction implements Serializable {
     }
 
     public int getLimitDate() {
-        return _limitDate;
+        return _deadline;
     }
 
     public int getPaidDate() {
@@ -50,8 +50,8 @@ public class Sale extends Transaction implements Serializable {
         _realValue = realValue;
     }
 
-    public void setLimitDate(int limitDate) {
-        _limitDate = limitDate;
+    public void setLimitDate(int deadline) {
+        _deadline = deadline;
     }
 
     public void setPaidDate(int paidDate) {
