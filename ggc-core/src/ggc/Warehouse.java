@@ -115,7 +115,7 @@ public class Warehouse implements Serializable {
    * @@param partner partner whose notifications are to be listed
    * @@return list of all selected partner's notifications
    */
-  public Set<Notification> listPartnerNotifications(Partner partner) {
+  public List<Notification> listPartnerNotifications(Partner partner) {
     return partner.listAllNotifications();
   }
 
@@ -204,6 +204,10 @@ public class Warehouse implements Serializable {
     }
     
     return batchSet;
+  }
+
+  public void toggleProductNotifications(Partner partner, Product product) {
+    partner.getMailbox().toggleBlockedProduct(product);
   }
 
   /**

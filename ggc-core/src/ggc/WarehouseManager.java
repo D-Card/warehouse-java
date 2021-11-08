@@ -70,12 +70,19 @@ public class WarehouseManager {
     return _warehouse.lookupPartner(id);
   }
 
-  public Set<Notification> requestListPartnerNotifications(String id) throws NoSuchPartnerException {
+  public List<Notification> requestListPartnerNotifications(String id) throws NoSuchPartnerException {
     return _warehouse.listPartnerNotifications(_warehouse.lookupPartner(id));
   }
 
   public Set<Batch> requestListBatchesUnderGivenPrice(float price) {
     return _warehouse.listBatchesUnderGivenPrice(price);
+  }
+
+  public void requestToggleProductNotifications(String partnerStr, String productStr) throws NoSuchPartnerException, NoSuchProductException {
+    Partner partner = _warehouse.lookupPartner(partnerStr);
+    Product product = _warehouse.lookupProduct(productStr);
+
+    _warehouse.toggleProductNotifications(partner, product);
   }
 
   /**
