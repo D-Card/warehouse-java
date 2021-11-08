@@ -20,13 +20,13 @@ public class Warehouse implements Serializable {
   private double _availableBalance = 0;
   private double _contabilisticBalance = 0;
   private int _date = 0;
-  private List<Product> _products = new ArrayList<Product>();
+  private Set<Product> _products = new TreeSet<Product>();
   private Map<String, Product> _productLookup = new TreeMap<String, Product>(String.CASE_INSENSITIVE_ORDER);
-  private List<Batch> _batches = new ArrayList<Batch>();
-  private Map<Partner, ArrayList<Batch>> _batchesByPartner = new HashMap<Partner, ArrayList<Batch>>();
-  private Map<Product, ArrayList<Batch>> _batchesByProduct = new HashMap<Product, ArrayList<Batch>>();
+  private Set<Batch> _batches = new TreeSet<Batch>();
+  private Map<Partner, TreeSet<Batch>> _batchesByPartner = new HashMap<Partner, TreeSet<Batch>>();
+  private Map<Product, TreeSet<Batch>> _batchesByProduct = new HashMap<Product, TreeSet<Batch>>();
   private Map<String, Partner> _partnerLookup = new TreeMap<String, Partner>(String.CASE_INSENSITIVE_ORDER);
-  private List<Partner> _partners = new ArrayList<Partner>();
+  private Set<Partner> _partners = new TreeSet<Partner>();
 
   // Getters
   /**
@@ -82,53 +82,48 @@ public class Warehouse implements Serializable {
   /**
    * @@return sorted list of all products
    */
-  public List<Product> listAllProducts() {
-    _products.sort(null);
-    return Collections.unmodifiableList(_products);
+  public Set<Product> listAllProducts() {
+    return _products;
   }
 
   /**
    * @@return sorted list of all batches
    */
-  public List<Batch> listAllBatches() {
-    _batches.sort(null);
-    return Collections.unmodifiableList(_batches);
+  public Set<Batch> listAllBatches() {
+    return _batches;
   }
 
   /**
    * @@param partner partner whose batches are to be listed
    * @@return sorted list of partner's batches
    */
-  public List<Batch> listBatchesByPartner(Partner partner) {
-    List<Batch> batchList = _batchesByPartner.get(partner);
-    batchList.sort(null);
-    return Collections.unmodifiableList(batchList);
+  public Set<Batch> listBatchesByPartner(Partner partner) {
+    Set<Batch> batchList = _batchesByPartner.get(partner);
+    return batchList;
   }
 
   /**
    * @@param product product which batches are to be listed
    * @@return sorted list of batches
    */
-  public List<Batch> listBatchesByProduct(Product product) {
-    List<Batch> batchList = _batchesByProduct.get(product);
-    batchList.sort(null);
-    return Collections.unmodifiableList(batchList);
+  public Set<Batch> listBatchesByProduct(Product product) {
+    Set<Batch> batchList = _batchesByProduct.get(product);
+    return batchList;
   }
 
   /**
    * @@param partner partner whose notifications are to be listed
    * @@return list of all selected partner's notifications
    */
-  public List<Notification> listPartnerNotifications(Partner partner) {
-    return Collections.unmodifiableList(partner.listAllNotifications());
+  public Set<Notification> listPartnerNotifications(Partner partner) {
+    return partner.listAllNotifications();
   }
 
   /**
    * @@return sorted list of all partners
    */
-  public List<Partner> listAllPartners() {
-    _partners.sort(null);
-    return Collections.unmodifiableList(_partners);
+  public Set<Partner> listAllPartners() {
+    return _partners;
   }
 
   /**
@@ -144,7 +139,7 @@ public class Warehouse implements Serializable {
       Partner newPartner = new Partner(id, name, address);
       _partners.add(newPartner);
       _partnerLookup.put(id, newPartner);
-      _batchesByPartner.put(newPartner, new ArrayList<Batch>());
+      _batchesByPartner.put(newPartner, new TreeSet<Batch>());
       return;
     }
 
@@ -165,7 +160,7 @@ public class Warehouse implements Serializable {
     } catch (NoSuchProductException e) {
       product = new ProductSimple(id);
       _productLookup.put(id, product);
-      _batchesByProduct.put(product, new ArrayList<Batch>());
+      _batchesByProduct.put(product, new TreeSet<Batch>());
       _products.add(product);
     }
 
@@ -191,7 +186,7 @@ public class Warehouse implements Serializable {
     } catch (NoSuchProductException e) {
       product = new ProductDerivative(id, recipe, multiplier);
       _productLookup.put(id, product);
-      _batchesByProduct.put(product, new ArrayList<Batch>());
+      _batchesByProduct.put(product, new TreeSet<Batch>());
       _products.add(product);
     }
 

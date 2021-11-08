@@ -41,19 +41,19 @@ public class WarehouseManager {
     return _warehouse.getDate();
   }
 
-  public List<Product> requestListAllProducts() {
+  public Set<Product> requestListAllProducts() {
     return _warehouse.listAllProducts();
   }
 
-  public List<Batch> requestListAllBatches() {
+  public Set<Batch> requestListAllBatches() {
     return _warehouse.listAllBatches();
   }
 
-  public List<Batch> requestListBatchesByProduct(String id) throws NoSuchProductException {
+  public Set<Batch> requestListBatchesByProduct(String id) throws NoSuchProductException {
     return _warehouse.listBatchesByProduct(_warehouse.lookupProduct(id));
   }
 
-  public List<Batch> requestListBatchesByPartner(String id) throws NoSuchPartnerException {
+  public Set<Batch> requestListBatchesByPartner(String id) throws NoSuchPartnerException {
     return _warehouse.listBatchesByPartner(_warehouse.lookupPartner(id));
   }
 
@@ -62,7 +62,7 @@ public class WarehouseManager {
     _updated = true;
   }
 
-  public List<Partner> requestListAllPartners () {
+  public Set<Partner> requestListAllPartners () {
     return _warehouse.listAllPartners();
   }
 
@@ -70,7 +70,7 @@ public class WarehouseManager {
     return _warehouse.lookupPartner(id);
   }
 
-  public List<Notification> requestListPartnerNotifications(String id) throws NoSuchPartnerException {
+  public Set<Notification> requestListPartnerNotifications(String id) throws NoSuchPartnerException {
     return _warehouse.listPartnerNotifications(_warehouse.lookupPartner(id));
   }
 

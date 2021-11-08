@@ -53,7 +53,7 @@ public class Partner implements Serializable, Comparable<Partner>{
         return _mailbox;
     }
 
-    public List<Notification> listAllNotifications() { return _mailbox.listAllNotifications(); }
+    public Set<Notification> listAllNotifications() { return _mailbox.listAllNotifications(); }
 
     // Setters
     public void setName(String name) {
