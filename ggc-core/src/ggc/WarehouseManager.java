@@ -74,6 +74,10 @@ public class WarehouseManager {
     return _warehouse.listPartnerNotifications(_warehouse.lookupPartner(id));
   }
 
+  public Set<Batch> requestListBatchesUnderGivenPrice(float price) {
+    return _warehouse.listBatchesUnderGivenPrice(price);
+  }
+
   /**
    * @@throws IOException
    * @@throws FileNotFoundException
