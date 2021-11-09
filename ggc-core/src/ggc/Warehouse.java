@@ -345,6 +345,35 @@ public class Warehouse implements Serializable {
     return acquisition;
   }
 
+  public Breakdown attemptBreakdown(Partner partner, Product product, int amount) throws NotEnoughProductsException {
+    if (product.getStock() < amount) { throw new NotEnoughProductsException(); }
+    if (product.getRecipe() == null) { return null; } // If product is simple, don't do anything
+
+    Recipe recipe = product.getRecipe();
+
+    float price = 0;
+    price += consumeProducts(product, amount);
+    Receipt receipt = new Receipt(product.getRecipe(), amount);
+    float productPrice;
+
+    for (Product p: recipe.getProducts()) { // Go to each product in the recipe
+      Batch batch = getCheapestBatch(p);
+      if (batch == null) { // Else make one with highest price ever registered
+        putProductForSale(p, partner, p.getMaxPrice(), amount * recipe.getProductQuantity(p));
+        productPrice = p.getMaxPrice() * amount * recipe.getProductQuantity(p);
+      } else { // If there is a batch, add to cheapest batch.
+        batch.addStock(amount);
+        productPrice = p.getMaxPrice() * amount * recipe.getProductQuantity(p);
+      }
+
+      receipt.productSetPrice(p, productPrice); // Set the price in the receipt
+      price -= productPrice; // Subtract the product price from the final price
+    }
+
+    Breakdown breakdown = new Breakdown(_totalTransactions++, partner, product, amount, price, getDate(), receipt);
+    return breakdown;
+  }
+
   // public Breakdown attemptBreakdown(Partner partner, Product product, int amount) {}
 
   // public void pay(Transaction transaction);
@@ -376,6 +405,13 @@ public class Warehouse implements Serializable {
     _batches.add(batch);
     _batchesByPartner.get(partner).add(batch);
     _batchesByProduct.get(product).add(batch);
+  }
+
+  public void putProductForSale(Product product, Partner partner, float price, int stock) {
+    Batch batch = lookupSimilarBatch(product, partner, price);
+
+    if (batch == null) { registerNewBatch(product, partner, price, stock); }
+    else { batch.addStock(stock); }
   }
 
   /**

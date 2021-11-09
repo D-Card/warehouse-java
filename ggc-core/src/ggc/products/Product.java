@@ -30,6 +30,8 @@ public abstract class Product implements Serializable, Comparable<Product>{
 
     public int getDeadline() { return _deadline; }
 
+    public Recipe getRecipe() { return null; }
+
     // Setters
     public void setId(String id) {
         _id = id;
