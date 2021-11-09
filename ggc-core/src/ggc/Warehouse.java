@@ -336,6 +336,12 @@ public class Warehouse implements Serializable {
     return acquisition;
   }
 
+  // public Breakdown attemptBreakdown(Partner partner, Product product, int amount) {}
+
+  // public void pay(Transaction transaction);
+
+  // public Transaction lookupTransaction(int id);
+
   // -------------------------------------------------------------------------------------------------------------------
 
   /**
