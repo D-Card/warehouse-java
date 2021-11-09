@@ -24,4 +24,12 @@ public class SelectionStatus extends Status implements Serializable {
 
         return (baseValue);
     }
+
+    public float calculatePartnerPoints(Partner partner, Transaction transaction) {
+        if (transaction.getPaidDate() <= transaction.getDeadline() + 2) { // 2 day tolerance
+            return (partner.getPoints() + transaction.getRealValue() * 10);
+        } else {
+            return (partner.getPoints() * 0.1f);
+        }
+    }
 }

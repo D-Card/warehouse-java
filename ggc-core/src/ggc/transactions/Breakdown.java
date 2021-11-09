@@ -15,6 +15,8 @@ public class Breakdown extends Sale implements Serializable {
         _receipt = receipt;
     }
 
+    public void markAsPaid() {};
+
     @Override
     public String toString() {
         return "DESAGREGAÇÃO|" + getId() + "|" + getPartner().getId() + "|" + getProduct().getId() + "|" +

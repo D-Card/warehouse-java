@@ -30,6 +30,10 @@ public abstract class Transaction implements Serializable {
         return _amount;
     }
 
+    public int getPaidDate() { return -1; }
+
+    public int getDeadline() { return -1; }
+
     // Setters
     public void setId(int id) {
         _id = id;
@@ -47,8 +51,9 @@ public abstract class Transaction implements Serializable {
         _amount = amount;
     }
 
+    public abstract float getRealValue();
+
     public void markAsPaid() {};
 
-    public float getRealValue() {return 0;} //FIXME
 
 }

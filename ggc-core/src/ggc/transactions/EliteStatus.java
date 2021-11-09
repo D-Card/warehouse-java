@@ -22,4 +22,12 @@ public class EliteStatus extends Status implements Serializable {
 
         return (baseValue);
     }
+
+    public float calculatePartnerPoints(Partner partner, Transaction transaction) {
+        if (transaction.getPaidDate() <= transaction.getDeadline() + 15) { // 15 day tolerance
+            return (partner.getPoints() + transaction.getRealValue() * 10);
+        } else {
+            return (partner.getPoints() * 0.25f);
+        }
+    }
 }

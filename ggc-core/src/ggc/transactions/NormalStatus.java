@@ -22,4 +22,12 @@ public class NormalStatus extends Status implements Serializable {
 
         return (baseValue);
     }
+
+    public float calculatePartnerPoints(Partner partner, Transaction transaction) {
+        if (transaction.getPaidDate() <= transaction.getDeadline()) {
+            return (partner.getPoints() + transaction.getRealValue() * 10);
+        } else {
+            return 0;
+        }
+    }
 }

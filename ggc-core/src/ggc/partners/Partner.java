@@ -5,6 +5,7 @@ import java.util.*;
 import java.text.Collator;
 import java.util.Locale;
 import ggc.exceptions.*;
+import ggc.transactions.*;
 
 public class Partner implements Serializable, Comparable<Partner>{
 
@@ -13,8 +14,8 @@ public class Partner implements Serializable, Comparable<Partner>{
     private String _name;
     private String _id;
     private String _address;
-    private String _status = "NORMAL";
-    private int _points = 0;
+    private Status _status = new NormalStatus();
+    private float _points = 0;
     private float _buyTotalValue = 0;
     private float _sellTotalValue = 0;
     private float _sellPaidValue = 0;
@@ -41,11 +42,11 @@ public class Partner implements Serializable, Comparable<Partner>{
         return _address;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return _status;
     }
 
-    public int getPoints() {
+    public float getPoints() {
         return _points;
     }
 
@@ -68,12 +69,16 @@ public class Partner implements Serializable, Comparable<Partner>{
         _address = address;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         _status = status;
     }
 
-    public void setPoints(int points) {
+    public void setPoints(float points) {
         _points = points;
+
+        if (_points >= 25000) { setStatus(new EliteStatus()); }
+        else if (_points >= 2000) { setStatus(new SelectionStatus()); }
+        else setStatus(new NormalStatus());
     }
 
     public void setMailbox(Mailbox mailbox) {

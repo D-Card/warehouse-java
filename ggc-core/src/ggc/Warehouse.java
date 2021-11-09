@@ -341,8 +341,8 @@ public class Warehouse implements Serializable {
     Acquisition acquisition = new Acquisition(_totalTransactions++, partner, product, amount, price, _date);
     _transactions.add(acquisition);
     lookupAcquisitionsByPartner(partner).add(acquisition);
-    _availableBalance -= acquisition.getPaidValue();
-    _contabilisticBalance -= acquisition.getPaidValue();
+    _availableBalance -= acquisition.getRealValue();
+    _contabilisticBalance -= acquisition.getRealValue();
 
     return acquisition;
   }

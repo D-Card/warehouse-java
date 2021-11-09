@@ -10,4 +10,6 @@ public abstract class Status implements Serializable {
 
     public abstract float calculateRealValue(float baseValue, int period, int dayDifference);
 
+    public abstract float calculatePartnerPoints(Partner partner, Transaction transaction);
+
 }

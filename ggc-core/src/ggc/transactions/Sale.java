@@ -58,27 +58,36 @@ public class Sale extends Transaction implements Serializable {
         _paidDate = paidDate;
     }
 
-    public void updatePrice(int date) {
+    private int calculatePeriod(int date) {
         int dayDif = _deadline - date;
         int n = getProduct().getDeadline();
-        int period;
 
         if (dayDif >= n) { // Updating the period in which the payment currently lies
-            period = 1;
+            return 1;
         } else if (dayDif >= 0 && dayDif < n) {
-            period = 2;
+            return 2;
         } else if (dayDif < 0 && dayDif >= n) {
-            period = 3;
-        } else {
-            period = 4;
+            return 3;
         }
 
+        return 4;
+    }
 
+    public void updateRealValue(int date) {
+        int period = calculatePeriod(date);
+        int dayDif = _deadline - date;
+
+        _realValue = getPartner().getStatus().calculateRealValue(_baseValue, period, dayDif);
     }
 
     public void markAsPaid(int date) {
         _paidDate = date;
-        updatePrice(date);
+        updateRealValue(date);
+
+        Partner partner = getPartner();
+        Status status = partner.getStatus();
+
+        partner.setPoints(status.calculatePartnerPoints(partner, this));
     }
 
     @Override
