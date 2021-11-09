@@ -327,24 +327,36 @@ public class Warehouse implements Serializable {
     _batchesByProduct.get(product).add(batch);
   }
 
-  public void attemptSale(int id, Partner partner, Product product, int amount, int deadline) throws NotEnoughProductsException {
+  public Sale attemptSale(Partner partner, Product product, int amount, int deadline) throws NotEnoughProductsException {
     if (product.getStock() <= amount) { // Check if product stock is enough to sell
       float price = consumeProducts(product, amount);
       Sale sale = new Sale(_totalTransactions++, partner, product, amount, price, price, deadline); // FIXME
       _transactions.add(sale);
 
+      return sale;
     } else { // If product stock isn't enough, check if difference between stock and requested amount can be crafted
       int stockNeeded = amount - product.getStock(); // Calculate difference
 
       if (checkIfProductIsCraftable((ProductDerivative) product, stockNeeded)) { // Check if it can be crafted
         craftProduct((ProductDerivative) product, partner, stockNeeded); // Craft the product
-        attemptSale(id, partner, product, amount, deadline); // Try to sell again
-        return;
+        return attemptSale(id, partner, product, amount, deadline); // Try to sell again
       }
     }
 
     // If none of the above are successful, throw exception
     throw new NotEnoughProductsException();
+  }
+
+  public Acquisition acquire(Partner partner, Product product, int amount, float price) {
+    _availableBalance -= amount * price;
+    _contabilisticBalance -= amount * price;
+
+    registerNewBatch(product, partner, price, amount);
+
+    Acquisition acquisition = new Acquisition(_totalTransactions++, partner, product, amount, price, _date);
+    _transactions.add(acquisition);
+
+    return acquisition;
   }
 
   /**
