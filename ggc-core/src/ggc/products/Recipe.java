@@ -21,6 +21,7 @@ public class Recipe implements Serializable{
         return _products;
     }
 
+
     public int getProductQuantity(Product product) {
         int quantity = _productQuantities.get(product);
 

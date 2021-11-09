@@ -287,7 +287,7 @@ public class Warehouse implements Serializable {
   public void craftProduct(ProductDerivative product, Partner partner, int quantity) {
     Recipe recipe = product.getRecipe();
 
-    while (quantity > 0) {
+    while (quantity > 0) { // While quantity requested hasn't been reached
       float price = 0;
 
       for (Product p : recipe.getProducts()) { // Consume each of the recipe's products
@@ -295,15 +295,15 @@ public class Warehouse implements Serializable {
           craftProduct((ProductDerivative) p, partner, recipe.getProductQuantity(p) - p.getStock());
         }
 
-        price += consumeProducts(p, recipe.getProductQuantity(p));
+        price += consumeProducts(p, recipe.getProductQuantity(p)); // Price gets summed
       }
 
-      price *= (1 + product.getMultiplier());
+      price *= (1 + product.getMultiplier()); // Calculate price of the new batch
       Batch similarBatch = lookupSimilarBatch(product, partner, price); // Look for an already existing batch
 
-      if (similarBatch != null) {
+      if (similarBatch != null) { // If a similar batch exists, add stock to that one
         similarBatch.addStock(1);
-      } else {
+      } else { // Else, create a new batch
         registerNewBatch(product, partner, price, 1);
       }
 
