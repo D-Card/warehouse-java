@@ -47,4 +47,8 @@ public abstract class Transaction implements Serializable {
         _amount = amount;
     }
 
+    public void markAsPaid() {};
+
+    public float getRealValue() {return 0;} //FIXME
+
 }

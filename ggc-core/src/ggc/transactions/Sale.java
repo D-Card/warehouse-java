@@ -58,6 +58,24 @@ public class Sale extends Transaction implements Serializable {
         _paidDate = paidDate;
     }
 
+    public void markAsPaid(int date) {
+        _paidDate = date;
+
+        int dayDif = _deadline - date;
+        int n = getProduct().getDeadline();
+
+        if (dayDif >= n) {
+
+        } else if (dayDif >= 0 && dayDif < n) {
+
+        } else if (dayDif < 0 && dayDif >= n) {
+
+        } else {
+
+        }
+
+    }
+
     @Override
     public String toString() {
         String text = "VENDA|" + getId() + "|" + getPartner().getId() + "|" + getProduct().getId() + "|" + getAmount() + "|" + getBaseValue() + "|" + getRealValue() + "|" + getLimitDate();

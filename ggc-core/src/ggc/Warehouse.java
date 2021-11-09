@@ -341,12 +341,14 @@ public class Warehouse implements Serializable {
     Acquisition acquisition = new Acquisition(_totalTransactions++, partner, product, amount, price, _date);
     _transactions.add(acquisition);
     lookupAcquisitionsByPartner(partner).add(acquisition);
+    _availableBalance -= acquisition.getPaidValue();
+    _contabilisticBalance -= acquisition.getPaidValue();
 
     return acquisition;
   }
 
   public Breakdown attemptBreakdown(Partner partner, Product product, int amount) throws NotEnoughProductsException {
-    if (product.getStock() < amount) { throw new NotEnoughProductsException(); }
+    if (product.getStock() < amount) { throw new NotEnoughProductsException(); } // If not enough stock, fails
     if (product.getRecipe() == null) { return null; } // If product is simple, don't do anything
 
     Recipe recipe = product.getRecipe();
@@ -371,12 +373,17 @@ public class Warehouse implements Serializable {
     }
 
     Breakdown breakdown = new Breakdown(_totalTransactions++, partner, product, amount, price, getDate(), receipt);
+    pay(breakdown);
+    _contabilisticBalance += breakdown.getRealValue();
+
     return breakdown;
   }
 
-  // public Breakdown attemptBreakdown(Partner partner, Product product, int amount) {}
+  public void pay(Transaction transaction) {
+    transaction.markAsPaid();
 
-  // public void pay(Transaction transaction);
+    _availableBalance += transaction.getRealValue();
+  };
 
   public Transaction lookupTransaction(int id) {
     return _transactions.get(id);
