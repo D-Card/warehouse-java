@@ -29,8 +29,11 @@ public class Warehouse implements Serializable {
   private Map<Product, TreeSet<Batch>> _batchesByProduct = new HashMap<Product, TreeSet<Batch>>();
   private Map<String, Partner> _partnerLookup = new TreeMap<String, Partner>(String.CASE_INSENSITIVE_ORDER);
   private Set<Partner> _partners = new TreeSet<Partner>();
+
   private int _totalTransactions = 0;
   private ArrayList<Transaction> _transactions = new ArrayList<Transaction>();
+  private Map<Partner, ArrayList<Transaction>> _salesByPartner = new HashMap<Partner, ArrayList<Transaction>>();
+  private Map<Partner, ArrayList<Transaction>> _acquisitionsByPartner = new HashMap<Partner, ArrayList<Transaction>>();
 
   // Getters
 
@@ -150,6 +153,8 @@ public class Warehouse implements Serializable {
       _partners.add(newPartner);
       _partnerLookup.put(id, newPartner);
       _batchesByPartner.put(newPartner, new TreeSet<Batch>());
+      _salesByPartner.put(newPartner, new ArrayList<Transaction>());
+      _acquisitionsByPartner.put(newPartner, new ArrayList<Transaction>());
       return;
     }
 
@@ -286,7 +291,9 @@ public class Warehouse implements Serializable {
       float price = 0;
 
       for (Product p : recipe.getProducts()) { // Consume each of the recipe's products
-        if (p.getStock() < recipe.getProductQuantity(p)) { craftProduct((ProductDerivative) p, partner, recipe.getProductQuantity(p) - p.getStock()); }
+        if (p.getStock() < recipe.getProductQuantity(p)) {
+          craftProduct((ProductDerivative) p, partner, recipe.getProductQuantity(p) - p.getStock());
+        }
 
         price += consumeProducts(p, recipe.getProductQuantity(p));
       }
@@ -309,6 +316,7 @@ public class Warehouse implements Serializable {
       float price = consumeProducts(product, amount);
       Sale sale = new Sale(_totalTransactions++, partner, product, amount, price, price, deadline); // FIXME
       _transactions.add(sale);
+      lookupSalesByPartner(partner).add(sale);
 
       return sale;
     } else { // If product stock isn't enough, check if difference between stock and requested amount can be crafted
@@ -332,6 +340,7 @@ public class Warehouse implements Serializable {
 
     Acquisition acquisition = new Acquisition(_totalTransactions++, partner, product, amount, price, _date);
     _transactions.add(acquisition);
+    lookupAcquisitionsByPartner(partner).add(acquisition);
 
     return acquisition;
   }
@@ -340,7 +349,17 @@ public class Warehouse implements Serializable {
 
   // public void pay(Transaction transaction);
 
-  // public Transaction lookupTransaction(int id);
+  public Transaction lookupTransaction(int id) {
+    return _transactions.get(id);
+  }
+
+  public ArrayList<Transaction> lookupSalesByPartner(Partner partner) {
+    return _salesByPartner.get(partner);
+  }
+
+  public ArrayList<Transaction> lookupAcquisitionsByPartner(Partner partner) {
+    return _acquisitionsByPartner.get(partner);
+  }
 
   // -------------------------------------------------------------------------------------------------------------------
 
