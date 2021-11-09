@@ -226,6 +226,8 @@ public class Warehouse implements Serializable {
     partner.getMailbox().toggleBlockedProduct(product);
   }
 
+  // Transactions ------------------------------------------------------------------------------------------------------
+
   public Batch getCheapestBatch(Product product) {
     Set<Batch> batchesByProduct = listBatchesByProduct(product);
     Batch cheapestBatch = null;
@@ -267,18 +269,6 @@ public class Warehouse implements Serializable {
     return price;
   }
 
-  public boolean checkIfProductIsCraftable(ProductDerivative product, int quantity) {
-    Recipe recipe = product.getRecipe();
-
-    for (Product p : recipe.getProducts()) {
-      if (p.getStock() < recipe.getProductQuantity(p) * quantity) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
   public Batch lookupSimilarBatch(Product product, Partner partner, float price) {
     for (Batch b : _batchesByProduct.get(product)) {
       if (b.getProduct() == product && b.getPartner() == partner && b.getPrice() == price) {
@@ -296,6 +286,8 @@ public class Warehouse implements Serializable {
       float price = 0;
 
       for (Product p : recipe.getProducts()) { // Consume each of the recipe's products
+        if (p.getStock() < recipe.getProductQuantity(p)) { craftProduct((ProductDerivative) p, partner, recipe.getProductQuantity(p) - p.getStock()); }
+
         price += consumeProducts(p, recipe.getProductQuantity(p));
       }
 
@@ -312,23 +304,8 @@ public class Warehouse implements Serializable {
     }
   }
 
-  /**
-   * @@param product product associated with batch
-   * @@param partner partner associated with batch
-   * @@param price product's price
-   * @@param stock product's stock
-   * @@throws UnavailableFileException
-   */
-  public void registerNewBatch (Product product, Partner partner, float price, int stock){
-    Batch batch = new Batch(product, partner, price, stock);
-
-    _batches.add(batch);
-    _batchesByPartner.get(partner).add(batch);
-    _batchesByProduct.get(product).add(batch);
-  }
-
   public Sale attemptSale(Partner partner, Product product, int amount, int deadline) throws NotEnoughProductsException {
-    if (product.getStock() <= amount) { // Check if product stock is enough to sell
+    if (product.getStock() <= amount) { // Check if product stock is directly enough to sell
       float price = consumeProducts(product, amount);
       Sale sale = new Sale(_totalTransactions++, partner, product, amount, price, price, deadline); // FIXME
       _transactions.add(sale);
@@ -337,9 +314,9 @@ public class Warehouse implements Serializable {
     } else { // If product stock isn't enough, check if difference between stock and requested amount can be crafted
       int stockNeeded = amount - product.getStock(); // Calculate difference
 
-      if (checkIfProductIsCraftable((ProductDerivative) product, stockNeeded)) { // Check if it can be crafted
+      if (product.enoughStock(amount)) { // Check if it can be crafted
         craftProduct((ProductDerivative) product, partner, stockNeeded); // Craft the product
-        return attemptSale(id, partner, product, amount, deadline); // Try to sell again
+        return attemptSale(partner, product, amount, deadline); // Try to sell again
       }
     }
 
@@ -357,6 +334,23 @@ public class Warehouse implements Serializable {
     _transactions.add(acquisition);
 
     return acquisition;
+  }
+
+  // -------------------------------------------------------------------------------------------------------------------
+
+  /**
+   * @@param product product associated with batch
+   * @@param partner partner associated with batch
+   * @@param price product's price
+   * @@param stock product's stock
+   * @@throws UnavailableFileException
+   */
+  public void registerNewBatch (Product product, Partner partner, float price, int stock){
+    Batch batch = new Batch(product, partner, price, stock);
+
+    _batches.add(batch);
+    _batchesByPartner.get(partner).add(batch);
+    _batchesByProduct.get(product).add(batch);
   }
 
   /**
@@ -413,7 +407,6 @@ public class Warehouse implements Serializable {
       }
     }
   }
-
 
 }
 

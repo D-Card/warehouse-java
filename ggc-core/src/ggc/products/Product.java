@@ -47,6 +47,8 @@ public abstract class Product implements Serializable, Comparable<Product>{
         _stock += stock;
     }
 
+    public abstract boolean enoughStock(int amount);
+
     @Override
     public int compareTo(Product product) {
         Collator collator = Collator.getInstance(Locale.getDefault());

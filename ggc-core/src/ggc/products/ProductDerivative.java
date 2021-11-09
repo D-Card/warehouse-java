@@ -34,6 +34,19 @@ public class ProductDerivative extends Product {
         _multiplier = multiplier;
     }
 
+    public boolean enoughStock(int amount) {
+        if (amount <= getStock()) return true;
+
+        int amountNeeded = amount - getStock();
+
+        for (Product p: _recipe.getProducts()) {
+            if (!p.enoughStock(amountNeeded * _recipe.getProductQuantity(p))) { return false; }
+        }
+
+        return true;
+    }
+
+
     @Override
     public String toString() {
         return getId() + "|" + Math.round(getMaxPrice()) + "|" + getStock() + "|" + _multiplier + "|" + _recipe.toString();

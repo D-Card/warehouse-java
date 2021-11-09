@@ -12,6 +12,8 @@ public class ProductSimple extends Product {
         setId(id);
     }
 
+    public boolean enoughStock(int amount) { return (amount <= getStock()); }
+
     @Override
     public String toString() {
         return getId() + "|" + Math.round(getMaxPrice()) + "|" + getStock();
