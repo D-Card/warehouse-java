@@ -6,6 +6,8 @@ import ggc.exceptions.*;
 
 public class ProductSimple extends Product {
 
+    private int _deadline = 5;
+
     public ProductSimple(String id) {
         setId(id);
     }

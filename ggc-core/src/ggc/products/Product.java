@@ -1,4 +1,4 @@
-package ggc.products;
+    package ggc.products;
 
 import java.io.*;
 import java.util.*;
@@ -13,6 +13,7 @@ public abstract class Product implements Serializable, Comparable<Product>{
     private String _id;
     private float _maxPrice = 0;
     private int _stock = 0;
+    private int _deadline = 5;
 
     // Getters
     public String getId() {
@@ -27,6 +28,7 @@ public abstract class Product implements Serializable, Comparable<Product>{
         return _stock;
     }
 
+    public int getDeadline() { return _deadline; }
 
     // Setters
     public void setId(String id) {

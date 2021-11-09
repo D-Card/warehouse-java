@@ -8,6 +8,7 @@ public class ProductDerivative extends Product {
 
     private Recipe _recipe;
     private float _multiplier;
+    private int _deadline = 3;
 
     public ProductDerivative(String id, Recipe recipe, float multiplier) {
         setId(id);

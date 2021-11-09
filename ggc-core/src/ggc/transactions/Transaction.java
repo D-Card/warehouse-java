@@ -4,7 +4,7 @@ import java.util.*;
 import ggc.partners.Partner;
 import ggc.products.Product;
 
-public class Transaction implements Serializable {
+public abstract class Transaction implements Serializable {
 
     private static final long serialVersionUID = 202110270052L;
 
@@ -30,7 +30,7 @@ public class Transaction implements Serializable {
         return _amount;
     }
 
-    //Setters
+    // Setters
     public void setId(int id) {
         _id = id;
     }

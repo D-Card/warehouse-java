@@ -13,7 +13,9 @@ import ggc.transactions.*;
  */
 public class Warehouse implements Serializable {
 
-  /** Serial number for serialization. */
+  /**
+   * Serial number for serialization.
+   */
   private static final long serialVersionUID = 202109192006L;
 
   // TODO - javadocs
@@ -27,14 +29,18 @@ public class Warehouse implements Serializable {
   private Map<Product, TreeSet<Batch>> _batchesByProduct = new HashMap<Product, TreeSet<Batch>>();
   private Map<String, Partner> _partnerLookup = new TreeMap<String, Partner>(String.CASE_INSENSITIVE_ORDER);
   private Set<Partner> _partners = new TreeSet<Partner>();
+  private int _totalTransactions = 0;
+  private ArrayList<Transaction> _transactions = new ArrayList<Transaction>();
 
   // Getters
+
   /**
    * @@return warehouse's date
    */
   public int getDate() {
     return _date;
   }
+
   /**
    * @@return warehouse's available balance
    */
@@ -54,7 +60,7 @@ public class Warehouse implements Serializable {
    * @@throws NoSuchDateException
    */
   public void advanceDate(int days) throws NoSuchDateException {
-    if (days > 0) 
+    if (days > 0)
       _date += days;
     else throw new NoSuchDateException(days);
   }
@@ -65,7 +71,9 @@ public class Warehouse implements Serializable {
    * @@throws NoSuchProductException
    */
   public Product lookupProduct(String id) throws NoSuchProductException {
-    if (!_productLookup.containsKey(id)) { throw new NoSuchProductException(id); }
+    if (!_productLookup.containsKey(id)) {
+      throw new NoSuchProductException(id);
+    }
     return _productLookup.get(id);
   }
 
@@ -75,7 +83,9 @@ public class Warehouse implements Serializable {
    * @@throws NoSuchProductException
    */
   public Partner lookupPartner(String id) throws NoSuchPartnerException {
-    if (!_partnerLookup.containsKey(id)) { throw new NoSuchPartnerException(id); }
+    if (!_partnerLookup.containsKey(id)) {
+      throw new NoSuchPartnerException(id);
+    }
     return _partnerLookup.get(id);
   }
 
@@ -165,7 +175,9 @@ public class Warehouse implements Serializable {
     }
 
     product.addStock(stock);
-    if (product.getMaxPrice() < price) { product.setMaxPrice(price); }
+    if (product.getMaxPrice() < price) {
+      product.setMaxPrice(price);
+    }
 
     return product;
   }
@@ -191,7 +203,9 @@ public class Warehouse implements Serializable {
     }
 
     product.addStock(stock);
-    if (product.getMaxPrice() < price) { product.setMaxPrice(price); }
+    if (product.getMaxPrice() < price) {
+      product.setMaxPrice(price);
+    }
 
     return product;
   }
@@ -199,15 +213,103 @@ public class Warehouse implements Serializable {
   public Set<Batch> listBatchesUnderGivenPrice(float price) {
     Set<Batch> batchSet = new TreeSet<Batch>();
 
-    for (Batch b: _batches) {
-      if (b.getPrice() < price) { batchSet.add(b); }
+    for (Batch b : _batches) {
+      if (b.getPrice() < price) {
+        batchSet.add(b);
+      }
     }
-    
+
     return batchSet;
   }
 
   public void toggleProductNotifications(Partner partner, Product product) {
     partner.getMailbox().toggleBlockedProduct(product);
+  }
+
+  public Batch getCheapestBatch(Product product) {
+    Set<Batch> batchesByProduct = listBatchesByProduct(product);
+    Batch cheapestBatch = null;
+    float cheapestPrice = -1;
+
+    for (Batch b : batchesByProduct) {
+      if (cheapestPrice == -1 || b.getPrice() < cheapestPrice) {
+        cheapestBatch = b;
+      }
+    }
+
+    return cheapestBatch;
+  }
+
+  public void removeBatch(Batch batch) {
+    _batches.remove(batch);
+    _batchesByPartner.remove(batch);
+    _batchesByProduct.remove(batch);
+  }
+
+  public float consumeProducts(Product product, int quantity) { // Returns the price of all of the products summed together
+    float price = 0;
+    Batch currentBatch;
+
+    while (quantity > 0) {
+      currentBatch = getCheapestBatch(product);
+
+      if (currentBatch.getStock() < quantity) {
+        price += currentBatch.getStock() * currentBatch.getPrice();
+        quantity -= currentBatch.getStock();
+        removeBatch(currentBatch);
+      } else {
+        price += quantity * currentBatch.getPrice();
+        currentBatch.addStock(-quantity);
+        quantity = 0;
+      }
+    }
+
+    return price;
+  }
+
+  public boolean checkIfProductIsCraftable(ProductDerivative product, int quantity) {
+    Recipe recipe = product.getRecipe();
+
+    for (Product p : recipe.getProducts()) {
+      if (p.getStock() < recipe.getProductQuantity(p) * quantity) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  public Batch lookupSimilarBatch(Product product, Partner partner, float price) {
+    for (Batch b : _batchesByProduct.get(product)) {
+      if (b.getProduct() == product && b.getPartner() == partner && b.getPrice() == price) {
+        return b;
+      }
+    }
+
+    return null;
+  }
+
+  public void craftProduct(ProductDerivative product, Partner partner, int quantity) {
+    Recipe recipe = product.getRecipe();
+
+    while (quantity > 0) {
+      float price = 0;
+
+      for (Product p : recipe.getProducts()) { // Consume each of the recipe's products
+        price += consumeProducts(p, recipe.getProductQuantity(p));
+      }
+
+      price *= (1 + product.getMultiplier());
+      Batch similarBatch = lookupSimilarBatch(product, partner, price); // Look for an already existing batch
+
+      if (similarBatch != null) {
+        similarBatch.addStock(1);
+      } else {
+        registerNewBatch(product, partner, price, 1);
+      }
+
+      quantity--;
+    }
   }
 
   /**
@@ -217,12 +319,32 @@ public class Warehouse implements Serializable {
    * @@param stock product's stock
    * @@throws UnavailableFileException
    */
-  public void registerNewBatch(Product product, Partner partner, float price, int stock) {
+  public void registerNewBatch (Product product, Partner partner, float price, int stock){
     Batch batch = new Batch(product, partner, price, stock);
 
     _batches.add(batch);
     _batchesByPartner.get(partner).add(batch);
     _batchesByProduct.get(product).add(batch);
+  }
+
+  public void attemptSale(int id, Partner partner, Product product, int amount, int deadline) throws NotEnoughProductsException {
+    if (product.getStock() <= amount) { // Check if product stock is enough to sell
+      float price = consumeProducts(product, amount);
+      Sale sale = new Sale(_totalTransactions++, partner, product, amount, price, price, deadline); // FIXME
+      _transactions.add(sale);
+
+    } else { // If product stock isn't enough, check if difference between stock and requested amount can be crafted
+      int stockNeeded = amount - product.getStock(); // Calculate difference
+
+      if (checkIfProductIsCraftable((ProductDerivative) product, stockNeeded)) { // Check if it can be crafted
+        craftProduct((ProductDerivative) product, partner, stockNeeded); // Craft the product
+        attemptSale(id, partner, product, amount, deadline); // Try to sell again
+        return;
+      }
+    }
+
+    // If none of the above are successful, throw exception
+    throw new NotEnoughProductsException();
   }
 
   /**
@@ -233,7 +355,8 @@ public class Warehouse implements Serializable {
    * @throws NoSuchPartnerExceprion
    * @throws NoSuchProductException
    */
-  public void importFile(String txtfile) throws IOException, BadEntryException, DuplicatePartnerException, NoSuchPartnerException, NoSuchProductException {
+  public void importFile (String txtfile) throws
+          IOException, BadEntryException, DuplicatePartnerException, NoSuchPartnerException, NoSuchProductException {
     BufferedReader in = new BufferedReader(new FileReader(txtfile));
     String s;
     while ((s = in.readLine()) != null) {
@@ -265,7 +388,7 @@ public class Warehouse implements Serializable {
           String[] recipeStrings = fields[6].split("#");
           Recipe recipe = new Recipe();
 
-          for(int i = 0; i < recipeStrings.length; i++) {
+          for (int i = 0; i < recipeStrings.length; i++) {
             String[] ss = recipeStrings[i].split(":");
             recipe.addProduct(lookupProduct(ss[0]), Integer.parseInt(ss[1]));
           }
@@ -275,7 +398,10 @@ public class Warehouse implements Serializable {
           registerNewBatch((Product) product, partner, price, stock);
         }
         default -> throw new BadEntryException(fields[0]);
-        }
       }
+    }
   }
+
+
 }
+
