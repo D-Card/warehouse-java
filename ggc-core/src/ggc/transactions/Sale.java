@@ -58,22 +58,27 @@ public class Sale extends Transaction implements Serializable {
         _paidDate = paidDate;
     }
 
-    public void markAsPaid(int date) {
-        _paidDate = date;
-
+    public void updatePrice(int date) {
         int dayDif = _deadline - date;
         int n = getProduct().getDeadline();
+        int period;
 
-        if (dayDif >= n) {
-
+        if (dayDif >= n) { // Updating the period in which the payment currently lies
+            period = 1;
         } else if (dayDif >= 0 && dayDif < n) {
-
+            period = 2;
         } else if (dayDif < 0 && dayDif >= n) {
-
+            period = 3;
         } else {
-
+            period = 4;
         }
 
+
+    }
+
+    public void markAsPaid(int date) {
+        _paidDate = date;
+        updatePrice(date);
     }
 
     @Override
