@@ -467,7 +467,7 @@ public class Warehouse implements Serializable {
    * @throws IOException
    * @throws BadEntryException
    * @throws DuplicatePartnerException
-   * @throws NoSuchPartnerExceprion
+   * @throws NoSuchPartnerException
    * @throws NoSuchProductException
    */
   public void importFile (String txtfile) throws
