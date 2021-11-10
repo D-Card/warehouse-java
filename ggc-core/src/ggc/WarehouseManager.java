@@ -45,15 +45,15 @@ public class WarehouseManager {
     return _warehouse.listAllProducts();
   }
 
-  public Set<Batch> requestListAllBatches() {
+  public PriorityQueue<Batch> requestListAllBatches() {
     return _warehouse.listAllBatches();
   }
 
-  public Set<Batch> requestListBatchesByProduct(String id) throws NoSuchProductException {
+  public PriorityQueue<Batch> requestListBatchesByProduct(String id) throws NoSuchProductException {
     return _warehouse.listBatchesByProduct(_warehouse.lookupProduct(id));
   }
 
-  public Set<Batch> requestListBatchesByPartner(String id) throws NoSuchPartnerException {
+  public PriorityQueue<Batch> requestListBatchesByPartner(String id) throws NoSuchPartnerException {
     return _warehouse.listBatchesByPartner(_warehouse.lookupPartner(id));
   }
 
@@ -78,7 +78,7 @@ public class WarehouseManager {
     return _warehouse.listPartnerNotificationsByMethod(_warehouse.lookupPartner(id), method);
   }
 
-  public Set<Batch> requestListBatchesUnderGivenPrice(float price) {
+  public PriorityQueue<Batch> requestListBatchesUnderGivenPrice(float price) {
     return _warehouse.listBatchesUnderGivenPrice(price);
   }
 

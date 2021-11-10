@@ -5,6 +5,7 @@ import java.util.*;
 import java.text.Collator;
 import java.util.Locale;
 import ggc.exceptions.*;
+import ggc.products.*;
 
 public abstract class Product implements Serializable, Comparable<Product>{
 
@@ -14,6 +15,7 @@ public abstract class Product implements Serializable, Comparable<Product>{
     private float _maxPrice = 0;
     private int _stock = 0;
     private int _deadline = 5;
+    private PriorityQueue<Batch> _batches = new PriorityQueue<Batch>();
 
     // Getters
     public String getId() {
@@ -31,6 +33,9 @@ public abstract class Product implements Serializable, Comparable<Product>{
     public int getDeadline() { return _deadline; }
 
     public Recipe getRecipe() { return null; }
+
+    public PriorityQueue<Batch> getBatches() { return _batches; }
+
 
     // Setters
     public void setId(String id) {
@@ -50,6 +55,10 @@ public abstract class Product implements Serializable, Comparable<Product>{
     public void addStock(int stock) {
         _stock += stock;
     }
+
+    public void addBatch(Batch batch) { _batches.add(batch); }
+
+    public void removeBatch(Batch batch) { _batches.remove(batch); }
 
     @Override
     public int compareTo(Product product) {

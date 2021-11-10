@@ -1,6 +1,5 @@
 package ggc;
 
-
 import java.io.*;
 import java.util.*;
 import ggc.exceptions.*;
@@ -24,9 +23,7 @@ public class Warehouse implements Serializable {
   private int _date = 0;
   private Set<Product> _products = new TreeSet<Product>();
   private Map<String, Product> _productLookup = new TreeMap<String, Product>(String.CASE_INSENSITIVE_ORDER);
-  private Set<Batch> _batches = new TreeSet<Batch>();
-  private Map<Partner, TreeSet<Batch>> _batchesByPartner = new HashMap<Partner, TreeSet<Batch>>();
-  private Map<Product, TreeSet<Batch>> _batchesByProduct = new HashMap<Product, TreeSet<Batch>>();
+  private PriorityQueue<Batch> _batches = new PriorityQueue<Batch>();
   private Map<String, Partner> _partnerLookup = new TreeMap<String, Partner>(String.CASE_INSENSITIVE_ORDER);
   private Set<Partner> _partners = new TreeSet<Partner>();
 
@@ -113,7 +110,7 @@ public class Warehouse implements Serializable {
   /**
    * @@return sorted list of all batches
    */
-  public Set<Batch> listAllBatches() {
+  public PriorityQueue<Batch> listAllBatches() {
     return _batches;
   }
 
@@ -121,18 +118,16 @@ public class Warehouse implements Serializable {
    * @@param partner partner whose batches are to be listed
    * @@return sorted list of partner's batches
    */
-  public Set<Batch> listBatchesByPartner(Partner partner) {
-    Set<Batch> batchList = _batchesByPartner.get(partner);
-    return batchList;
+  public PriorityQueue<Batch> listBatchesByPartner(Partner partner) {
+    return partner.getBatches();
   }
 
   /**
    * @@param product product which batches are to be listed
    * @@return sorted list of batches
    */
-  public Set<Batch> listBatchesByProduct(Product product) {
-    Set<Batch> batchList = _batchesByProduct.get(product);
-    return batchList;
+  public PriorityQueue<Batch> listBatchesByProduct(Product product) {
+    return product.getBatches();
   }
 
   /**
@@ -167,7 +162,6 @@ public class Warehouse implements Serializable {
       Partner newPartner = new Partner(id, name, address);
       _partners.add(newPartner);
       _partnerLookup.put(id, newPartner);
-      _batchesByPartner.put(newPartner, new TreeSet<Batch>());
       _salesByPartner.put(newPartner, new ArrayList<Transaction>());
       _acquisitionsByPartner.put(newPartner, new ArrayList<Transaction>());
       _salesPaidByPartner.put(newPartner, new ArrayList<Transaction>());
@@ -191,7 +185,6 @@ public class Warehouse implements Serializable {
     } catch (NoSuchProductException e) {
       product = new ProductSimple(id);
       _productLookup.put(id, product);
-      _batchesByProduct.put(product, new TreeSet<Batch>());
       _products.add(product);
     }
 
@@ -219,7 +212,6 @@ public class Warehouse implements Serializable {
     } catch (NoSuchProductException e) {
       product = new ProductDerivative(id, recipe, multiplier);
       _productLookup.put(id, product);
-      _batchesByProduct.put(product, new TreeSet<Batch>());
       _products.add(product);
     }
 
@@ -231,16 +223,16 @@ public class Warehouse implements Serializable {
     return product;
   }
 
-  public Set<Batch> listBatchesUnderGivenPrice(float price) {
-    Set<Batch> batchSet = new TreeSet<Batch>();
+  public PriorityQueue<Batch> listBatchesUnderGivenPrice(float price) {
+    PriorityQueue<Batch> batchQueue = new PriorityQueue<Batch>();
 
     for (Batch b : _batches) {
       if (b.getPrice() < price) {
-        batchSet.add(b);
+        batchQueue.add(b);
       }
     }
 
-    return batchSet;
+    return batchQueue;
   }
 
   public void toggleProductNotifications(Partner partner, Product product) {
@@ -250,7 +242,7 @@ public class Warehouse implements Serializable {
   // Transactions ------------------------------------------------------------------------------------------------------
 
   public Batch getCheapestBatch(Product product) {
-    Set<Batch> batchesByProduct = listBatchesByProduct(product);
+    PriorityQueue<Batch> batchesByProduct = listBatchesByProduct(product);
     Batch cheapestBatch = null;
     float cheapestPrice = -1;
 
@@ -265,8 +257,8 @@ public class Warehouse implements Serializable {
 
   public void removeBatch(Batch batch) {
     _batches.remove(batch);
-    _batchesByPartner.remove(batch);
-    _batchesByProduct.remove(batch);
+    batch.getPartner().removeBatch(batch);
+    batch.getProduct().removeBatch(batch);
   }
 
   public float consumeProducts(Product product, int quantity) { // Returns the price of all of the products summed together
@@ -291,7 +283,7 @@ public class Warehouse implements Serializable {
   }
 
   public Batch lookupSimilarBatch(Product product, Partner partner, float price) {
-    for (Batch b : _batchesByProduct.get(product)) {
+    for (Batch b : listBatchesByProduct(product)) {
       if (b.getProduct() == product && b.getPartner() == partner && b.getPrice() == price) {
         return b;
       }
@@ -457,8 +449,9 @@ public class Warehouse implements Serializable {
     product.addStock(stock);
 
     _batches.add(batch);
-    _batchesByPartner.get(partner).add(batch);
-    _batchesByProduct.get(product).add(batch);
+
+    partner.addBatch(batch);
+    product.addBatch(batch);
   }
 
   public void putProductForSale(Product product, Partner partner, float price, int stock) {

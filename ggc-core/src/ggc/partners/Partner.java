@@ -6,6 +6,7 @@ import java.text.Collator;
 import java.util.Locale;
 import ggc.exceptions.*;
 import ggc.transactions.*;
+import ggc.products.*;
 
 public class Partner implements Serializable, Comparable<Partner>{
 
@@ -20,6 +21,7 @@ public class Partner implements Serializable, Comparable<Partner>{
     private float _sellTotalValue = 0;
     private float _sellPaidValue = 0;
     private Mailbox _mailbox = new Mailbox();
+    private PriorityQueue<Batch> _batches = new PriorityQueue<Batch>();
 
     // TBD - Datastructure for transaction history
 
@@ -58,6 +60,8 @@ public class Partner implements Serializable, Comparable<Partner>{
 
     public List<Notification> listAllNotificationsByMethod(String method) { return _mailbox.listNotificationsByMethod(method); }
 
+    public PriorityQueue<Batch> getBatches() { return _batches; }
+
     // Setters
     public void setName(String name) {
         _name = name;
@@ -86,6 +90,10 @@ public class Partner implements Serializable, Comparable<Partner>{
     public void setMailbox(Mailbox mailbox) {
         _mailbox = mailbox;
     }
+
+    public void addBatch(Batch batch) { _batches.add(batch); }
+
+    public void removeBatch(Batch batch) { _batches.remove(batch); }
 
     @Override
     public String toString() {
