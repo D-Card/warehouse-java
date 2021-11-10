@@ -85,6 +85,18 @@ public class WarehouseManager {
     _warehouse.toggleProductNotifications(partner, product);
   }
 
+  public ArrayList<Transaction> requestShowPartnerSales(String id) throws NoSuchPartnerException {
+    Partner partner = _warehouse.lookupPartner(id);
+
+    return _warehouse.lookupSalesByPartner(partner);
+  }
+
+  public ArrayList<Transaction> requestShowPartnerAcquisitions(String id) throws NoSuchPartnerException {
+    Partner partner = _warehouse.lookupPartner(id);
+
+    return _warehouse.lookupAcquisitionsByPartner(partner);
+  }
+
   /**
    * @@throws IOException
    * @@throws FileNotFoundException

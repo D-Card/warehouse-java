@@ -35,7 +35,7 @@ public class Warehouse implements Serializable {
   private ArrayList<Transaction> _unpaidTransactions = new ArrayList<Transaction>();
   private Map<Partner, ArrayList<Transaction>> _salesByPartner = new HashMap<Partner, ArrayList<Transaction>>();
   private Map<Partner, ArrayList<Transaction>> _acquisitionsByPartner = new HashMap<Partner, ArrayList<Transaction>>();
-
+  private Map<Partner, ArrayList<Transaction>> _salesPaidByPartner = new HashMap<Partner, ArrayList<Transaction>>();
 
   private NotificationStation _notStation = new NotificationStation();
 
@@ -166,6 +166,7 @@ public class Warehouse implements Serializable {
       _batchesByPartner.put(newPartner, new TreeSet<Batch>());
       _salesByPartner.put(newPartner, new ArrayList<Transaction>());
       _acquisitionsByPartner.put(newPartner, new ArrayList<Transaction>());
+      _salesPaidByPartner.put(newPartner, new ArrayList<Transaction>());
       return;
     }
 
