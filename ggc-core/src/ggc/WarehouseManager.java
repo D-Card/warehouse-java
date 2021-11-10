@@ -146,6 +146,22 @@ public class WarehouseManager {
     } catch (NoSuchPartnerException | NoSuchProductException e) {}
   }
 
+  public void requestRegisterProductDerivative(String partnerString, String productString, float price, int stock, ArrayList<String> products, ArrayList<Integer> productQuantities, float multiplier) {
+    try {
+      Partner partner = _warehouse.lookupPartner(partnerString);
+      Recipe recipe = new Recipe();
+
+      for (int i = 0; i < products.size(); i++) {
+        recipe.addProduct(_warehouse.lookupProduct(products.get(i)), productQuantities.get(i));
+      }
+
+      _warehouse.registerProductDerivative(productString, recipe, multiplier, price, stock);
+      Product product = _warehouse.lookupProduct(productString);
+
+      _warehouse.acquire(partner, product, stock, price);
+    } catch (NoSuchPartnerException | NoSuchProductException e) {}
+  }
+
   /**
    * @@throws IOException
    * @@throws FileNotFoundException

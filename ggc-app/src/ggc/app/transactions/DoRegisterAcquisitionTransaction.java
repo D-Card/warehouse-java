@@ -6,6 +6,7 @@ import ggc.WarehouseManager;
 import ggc.exceptions.*;
 import ggc.app.exceptions.*;
 import pt.tecnico.uilib.forms.Form;
+import java.util.*;
 //FIXME import classes
 
 /**
@@ -33,10 +34,33 @@ public class DoRegisterAcquisitionTransaction extends Command<WarehouseManager> 
     } catch (NoSuchPartnerException e) {
       throw new UnknownPartnerKeyException(stringField("partner"));
     } catch (NoSuchProductException e) {
-      if (!Form.confirm(Prompt.addRecipe())) {
-        _receiver.requestRegisterProductSimple(stringField("partner"), stringField("product"), realField("price").floatValue(), integerField("amount"));
-      } else {
+      if (!Form.confirm(Prompt.addRecipe())) { // If it's a simple product
+        _receiver.requestRegisterProductSimple(
+                stringField("partner"),
+                stringField("product"),
+                realField("price").floatValue(),
+                integerField("amount"));
+      } else { // If it's a derivative product
+        int productsLeft = Form.requestInteger(Prompt.numberOfComponents());
+        float multiplier = Form.requestReal(Prompt.alpha()).floatValue();
+        ArrayList<String> productStrings = new ArrayList<String>();
+        ArrayList<Integer> productQuantities = new ArrayList<Integer>();
 
+        while (productsLeft > 0) {
+          productStrings.add(Form.requestString(Prompt.productKey()));
+          productQuantities.add(Form.requestInteger(Prompt.amount()));
+
+          productsLeft --;
+        }
+
+        _receiver.requestRegisterProductDerivative(
+                stringField("partner"),
+                stringField("product"),
+                realField("price").floatValue(),
+                integerField("amount"),
+                productStrings,
+                productQuantities,
+                multiplier);
       }
 
     } catch (NotEnoughProductsException e) {}
