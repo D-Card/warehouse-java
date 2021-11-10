@@ -356,8 +356,10 @@ public class Warehouse implements Serializable {
     putProductForSale(product, partner, price, amount);
 
     Acquisition acquisition = new Acquisition(_totalTransactions++, partner, product, amount, price, _date);
+
     _transactions.add(acquisition);
     lookupAcquisitionsByPartner(partner).add(acquisition);
+
     _availableBalance -= acquisition.getRealValue();
     _contabilisticBalance -= acquisition.getRealValue();
 
@@ -428,7 +430,7 @@ public class Warehouse implements Serializable {
   }
 
   public Transaction lookupTransaction(int id) throws NoSuchTransactionException {
-    if (id > _transactions.size()) { throw new NoSuchTransactionException(id); }
+    if (id >= _transactions.size() || id < 0) { throw new NoSuchTransactionException(id); }
 
     return _transactions.get(id);
   }
@@ -444,12 +446,13 @@ public class Warehouse implements Serializable {
    */
   public void registerNewBatch (Product product, Partner partner, float price, int stock){
     Batch batch = new Batch(product, partner, price, stock);
+    Batch cheapestBatch = getCheapestBatch(product);
 
     // If stock was 0, then emit a notification for NEW
     if (product.getStock() == 0) { _notStation.emitNotification(new Notification("NEW", product, price)); }
 
     // If new price is cheaper than old cheapest batch, then emit a notification for BARGAIN
-    if (getCheapestBatch(product).getPrice() > price) { _notStation.emitNotification(new Notification("BARGAIN", product, price)); }
+    if (cheapestBatch != null && cheapestBatch.getPrice() > price) { _notStation.emitNotification(new Notification("BARGAIN", product, price)); }
 
     product.addStock(stock);
 

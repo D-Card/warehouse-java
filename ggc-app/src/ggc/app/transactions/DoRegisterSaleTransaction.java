@@ -23,10 +23,10 @@ public class DoRegisterSaleTransaction extends Command<WarehouseManager> {
   public final void execute() throws CommandException {
     try {
       _receiver.requestAttemptSale(
-        getStringField("partner"),
-        getIntegerField("date"),
-        getStringField("product"),
-        getIntegerField("amount")
+        stringField("partner"),
+        integerField("date"),
+        stringField("product"),
+        integerField("amount")
       );
     } catch (NoSuchPartnerException e) {
       throw new UnknownPartnerKeyException(stringField("partner"));

@@ -7,6 +7,7 @@ import ggc.products.Product;
 public class SelectionStatus extends Status implements Serializable {
 
     private static final long serialVersionUID = 202110270052L;
+    private static final String str = "SELECTION";
 
     public float calculateRealValue(float baseValue, int period, int dayDifference) {
         switch (period) {
@@ -32,4 +33,7 @@ public class SelectionStatus extends Status implements Serializable {
             return (partner.getPoints() * 0.1f);
         }
     }
+
+    @Override
+    public String toString() { return str; }
 }

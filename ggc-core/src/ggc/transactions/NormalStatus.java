@@ -7,6 +7,7 @@ import ggc.products.Product;
 public class NormalStatus extends Status implements Serializable {
 
     private static final long serialVersionUID = 202110270052L;
+    private static final String str = "NORMAL";
 
     public float calculateRealValue(float baseValue, int period, int dayDifference) {
         switch (period) {
@@ -30,4 +31,7 @@ public class NormalStatus extends Status implements Serializable {
             return 0;
         }
     }
+
+    @Override
+    public String toString() { return str; }
 }

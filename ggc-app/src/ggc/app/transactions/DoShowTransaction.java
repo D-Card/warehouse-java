@@ -20,7 +20,7 @@ public class DoShowTransaction extends Command<WarehouseManager> {
   @Override
   public final void execute() throws CommandException {
     try {
-      _receiver.requestShowTransaction(integerField("transaction"));
+      _display.popup(_receiver.requestShowTransaction(integerField("transaction")));
     } catch (NoSuchTransactionException e) {
       throw new UnknownTransactionKeyException(e.getId());
     }
