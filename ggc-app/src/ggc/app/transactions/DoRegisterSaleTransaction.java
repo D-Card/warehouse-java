@@ -3,7 +3,8 @@ package ggc.app.transactions;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
 import ggc.WarehouseManager;
-//FIXME import classes
+import ggc.exceptions.*;
+import ggc.app.exceptions.*;
 
 /**
  * 
@@ -12,20 +13,28 @@ public class DoRegisterSaleTransaction extends Command<WarehouseManager> {
 
   public DoRegisterSaleTransaction(WarehouseManager receiver) {
     super(Label.REGISTER_SALE_TRANSACTION, receiver);
-    addStringField("partner-id", Prompt.partnerKey());  
+    addStringField("partner", Prompt.partnerKey());
     addIntegerField("date", Prompt.paymentDeadline());
-    addStringField("product-id", Prompt.productKey());
+    addStringField("product", Prompt.productKey());
     addIntegerField("amount", Prompt.amount());
     }
 
   @Override
   public final void execute() throws CommandException {
-    // _receiver.registerSaleTransaction(
-    //   getStringField("partner-id"),
-    //   getIntegerField("date"),
-    //   getStringField("product-id"),
-    //   getIntegerField("amount")
-    // );
+    try {
+      _receiver.requestAttemptSale(
+        getStringField("partner"),
+        getIntegerField("date"),
+        getStringField("product"),
+        getIntegerField("amount")
+      );
+    } catch (NoSuchPartnerException e) {
+      throw new UnknownPartnerKeyException(stringField("partner"));
+    } catch (NoSuchProductException e) {
+      throw new UnknownProductKeyException(stringField("product"));
+    } catch (NotEnoughProductsException e) {
+      throw new UnavailableProductException(stringField("product"), integerField("amount"), e.getCurrentStock());
+    }
   }
 
 }

@@ -3,6 +3,8 @@ package ggc.app.transactions;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
 import ggc.WarehouseManager;
+import ggc.exceptions.*;
+import ggc.app.exceptions.*;
 //FIXME import classes
 
 /**

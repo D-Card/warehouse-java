@@ -115,16 +115,14 @@ public class WarehouseManager {
     _warehouse.pay(_warehouse.lookupTransaction(id));
   }
 
-  public void requestAttemptBreakdown(String partnerString, String productString, int amount) throws NotEnoughProductsException {
-    try {
-      Partner partner = _warehouse.lookupPartner(partnerString);
-      Product product = _warehouse.lookupProduct(productString);
+    public void requestAttemptBreakdown(String partnerString, String productString, int amount) throws NotEnoughProductsException, NoSuchPartnerException, NoSuchProductException {
+    Partner partner = _warehouse.lookupPartner(partnerString);
+    Product product = _warehouse.lookupProduct(productString);
 
-      _warehouse.attemptBreakdown(partner, product, amount);
-
-    } catch (NoSuchPartnerException | NoSuchProductException e) {}
-
+    _warehouse.attemptBreakdown(partner, product, amount);
   }
+
+  public void requestAttemptSale(String partnerString, int date, String productString, int amount) {};
 
   /**
    * @@throws IOException
