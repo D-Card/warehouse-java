@@ -45,11 +45,11 @@ public abstract class Product implements Serializable, Comparable<Product>{
         _stock = stock;
     }
 
+    public abstract boolean enoughStock(int amount);
+
     public void addStock(int stock) {
         _stock += stock;
     }
-
-    public abstract boolean enoughStock(int amount);
 
     @Override
     public int compareTo(Product product) {

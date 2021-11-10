@@ -35,6 +35,8 @@ public class Warehouse implements Serializable {
   private Map<Partner, ArrayList<Transaction>> _salesByPartner = new HashMap<Partner, ArrayList<Transaction>>();
   private Map<Partner, ArrayList<Transaction>> _acquisitionsByPartner = new HashMap<Partner, ArrayList<Transaction>>();
 
+  private NotificationStation _notStation = new NotificationStation();
+
   // Getters
 
   /**
@@ -336,7 +338,7 @@ public class Warehouse implements Serializable {
     _availableBalance -= amount * price;
     _contabilisticBalance -= amount * price;
 
-    registerNewBatch(product, partner, price, amount);
+    putProductForSale(product, partner, price, amount);
 
     Acquisition acquisition = new Acquisition(_totalTransactions++, partner, product, amount, price, _date);
     _transactions.add(acquisition);
@@ -408,6 +410,7 @@ public class Warehouse implements Serializable {
    */
   public void registerNewBatch (Product product, Partner partner, float price, int stock){
     Batch batch = new Batch(product, partner, price, stock);
+    product.addStock(stock);
 
     _batches.add(batch);
     _batchesByPartner.get(partner).add(batch);
@@ -417,8 +420,16 @@ public class Warehouse implements Serializable {
   public void putProductForSale(Product product, Partner partner, float price, int stock) {
     Batch batch = lookupSimilarBatch(product, partner, price);
 
+    // If stock was 0, then emit a notification for NEW
+    if (product.getStock() == 0) { _notStation.emitNotification(new Notification(product, price)); }
+
+    // If new price is cheaper than old cheapest batch, then emit a notification for BARGAIN
+    if (getCheapestBatch(product).getPrice() > price) { _notStation.emitNotification(new Notification(product, price)); }
+
     if (batch == null) { registerNewBatch(product, partner, price, stock); }
     else { batch.addStock(stock); }
+
+
   }
 
   /**

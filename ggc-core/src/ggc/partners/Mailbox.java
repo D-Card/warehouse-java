@@ -16,7 +16,21 @@ public class Mailbox implements Serializable{
         else { _blockedProducts.remove(product); }
     }
 
+    public void receiveNotification(Notification notification) {
+        if (!checkIfProductBlocked(notification.getProduct())) {
+            _notifications.add(notification);
+        }
+    }
+
+    private void clearNotifications() { _notifications.clear(); }
+
+    public ArrayList<Notification> listAllNotifications() {
+        ArrayList<Notification> notifications = new ArrayList<Notification>(_notifications);
+        clearNotifications();
+
+        return notifications;
+    }
+
     public boolean checkIfProductBlocked(Product product) { return (_blockedProducts.contains(product)); }
 
-    public List<Notification> listAllNotifications() { return _notifications; }
 }
