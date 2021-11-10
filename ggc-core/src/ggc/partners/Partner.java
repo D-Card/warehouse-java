@@ -56,6 +56,8 @@ public class Partner implements Serializable, Comparable<Partner>{
 
     public List<Notification> listAllNotifications() { return _mailbox.listAllNotifications(); }
 
+    public List<Notification> listAllNotificationsByMethod(String method) { return _mailbox.listNotificationsByMethod(method); }
+
     // Setters
     public void setName(String name) {
         _name = name;

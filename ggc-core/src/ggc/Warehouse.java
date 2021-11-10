@@ -143,6 +143,10 @@ public class Warehouse implements Serializable {
     return partner.listAllNotifications();
   }
 
+  public List<Notification> listPartnerNotificationsByMethod(Partner partner, String method) {
+    return partner.listAllNotificationsByMethod(method);
+  }
+
   /**
    * @@return sorted list of all partners
    */
@@ -440,6 +444,13 @@ public class Warehouse implements Serializable {
    */
   public void registerNewBatch (Product product, Partner partner, float price, int stock){
     Batch batch = new Batch(product, partner, price, stock);
+
+    // If stock was 0, then emit a notification for NEW
+    if (product.getStock() == 0) { _notStation.emitNotification(new Notification("NEW", product, price)); }
+
+    // If new price is cheaper than old cheapest batch, then emit a notification for BARGAIN
+    if (getCheapestBatch(product).getPrice() > price) { _notStation.emitNotification(new Notification("BARGAIN", product, price)); }
+
     product.addStock(stock);
 
     _batches.add(batch);
@@ -449,12 +460,6 @@ public class Warehouse implements Serializable {
 
   public void putProductForSale(Product product, Partner partner, float price, int stock) {
     Batch batch = lookupSimilarBatch(product, partner, price);
-
-    // If stock was 0, then emit a notification for NEW
-    if (product.getStock() == 0) { _notStation.emitNotification(new Notification(product, price)); }
-
-    // If new price is cheaper than old cheapest batch, then emit a notification for BARGAIN
-    if (getCheapestBatch(product).getPrice() > price) { _notStation.emitNotification(new Notification(product, price)); }
 
     if (batch == null) { registerNewBatch(product, partner, price, stock); }
     else { batch.addStock(stock); }

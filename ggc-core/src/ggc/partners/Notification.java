@@ -13,6 +13,7 @@ public class Notification implements Serializable {
     private String _type;
     private Product _product;
     private float _price;
+    private String _method = "";
 
     public Notification(String type, Product product, float price) { // With a different method
         _product = product;
@@ -20,11 +21,7 @@ public class Notification implements Serializable {
         _type = type;
     }
 
-    public Notification(Product product, float price) { // By omission
-        _product = product;
-        _price = price;
-        _type = "Omission";
-    }
+    public String getMethod() { return _method; }
 
     public Product getProduct() { return _product; }
 

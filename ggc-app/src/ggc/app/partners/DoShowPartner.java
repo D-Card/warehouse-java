@@ -20,7 +20,7 @@ class DoShowPartner extends Command<WarehouseManager> {
   public void execute() throws CommandException {
     try {
       _display.popup(_receiver.requestShowPartner(stringField("partner")));
-      _display.popup(_receiver.requestListPartnerNotifications(stringField("partner")));
+      _display.popup(_receiver.requestListPartnerNotificationsByMethod(stringField("partner"), ""));
     } catch (NoSuchPartnerException e) {
       throw new UnknownPartnerKeyException(e.getId());
     }

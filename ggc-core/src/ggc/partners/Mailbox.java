@@ -31,6 +31,21 @@ public class Mailbox implements Serializable{
         return notifications;
     }
 
+    public ArrayList<Notification> listNotificationsByMethod(String method) {
+        ArrayList<Notification> newNotifications = new ArrayList<Notification>();
+
+        for (Notification n: _notifications) {
+            if (n.getMethod().equals(method)) {
+                newNotifications.add(n);
+            }
+        }
+
+        // If listing by omission, clear all
+        if (method.equals("")) { clearNotifications(); }
+
+        return newNotifications;
+    }
+
     public boolean checkIfProductBlocked(Product product) { return (_blockedProducts.contains(product)); }
 
 }
