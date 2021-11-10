@@ -85,6 +85,12 @@ public class WarehouseManager {
     _warehouse.toggleProductNotifications(partner, product);
   }
 
+  public ArrayList<Transaction> requestShowPartnerPaidSales(String id) throws NoSuchPartnerException {
+    Partner partner = _warehouse.lookupPartner(id);
+
+    return _warehouse.lookupPaidSalesByPartner(partner);
+  }
+
   public ArrayList<Transaction> requestShowPartnerSales(String id) throws NoSuchPartnerException {
     Partner partner = _warehouse.lookupPartner(id);
 
@@ -95,6 +101,14 @@ public class WarehouseManager {
     Partner partner = _warehouse.lookupPartner(id);
 
     return _warehouse.lookupAcquisitionsByPartner(partner);
+  }
+
+  public Transaction requestShowTransaction(int id) throws NoSuchTransactionException {
+    return _warehouse.lookupTransaction(id);
+  }
+
+  public void requestPay(int id) throws NoSuchTransactionException {
+    _warehouse.pay(_warehouse.lookupTransaction(id));
   }
 
   /**

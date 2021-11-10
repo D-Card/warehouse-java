@@ -395,12 +395,20 @@ public class Warehouse implements Serializable {
   public void pay(Transaction transaction) {
     transaction.markAsPaid();
 
-    if (_unpaidTransactions.contains(transaction)) { _unpaidTransactions.remove(transaction); }
+    if (_unpaidTransactions.contains(transaction)) {
+      _unpaidTransactions.remove(transaction);
+      _salesPaidByPartner.get(transaction.getPartner()).add(transaction);
+    }
+
     _availableBalance += transaction.getRealValue();
   }
 
-  public Transaction lookupTransaction(int id) {
-    return _transactions.get(id);
+  public ArrayList<Transaction> lookupPaidSalesByPartner(Partner partner) {
+    for (Transaction t: _salesPaidByPartner.get(partner)) {
+      t.updateRealValue(_date);
+    }
+
+    return _salesPaidByPartner.get(partner);
   }
 
   public ArrayList<Transaction> lookupSalesByPartner(Partner partner) {
@@ -413,6 +421,12 @@ public class Warehouse implements Serializable {
 
   public ArrayList<Transaction> lookupAcquisitionsByPartner(Partner partner) {
     return _acquisitionsByPartner.get(partner);
+  }
+
+  public Transaction lookupTransaction(int id) throws NoSuchTransactionException {
+    if (id > _transactions.size()) { throw new NoSuchTransactionException(id); }
+
+    return _transactions.get(id);
   }
 
   // -------------------------------------------------------------------------------------------------------------------
