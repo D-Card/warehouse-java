@@ -38,7 +38,6 @@ public class Acquisition extends Transaction implements Serializable {
         _paidDate = paidDate;
     }
 
-    public void markAsPaid() {};
 
     @Override
     public String toString() {

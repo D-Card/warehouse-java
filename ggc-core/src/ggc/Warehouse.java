@@ -32,8 +32,10 @@ public class Warehouse implements Serializable {
 
   private int _totalTransactions = 0;
   private ArrayList<Transaction> _transactions = new ArrayList<Transaction>();
+  private ArrayList<Transaction> _unpaidTransactions = new ArrayList<Transaction>();
   private Map<Partner, ArrayList<Transaction>> _salesByPartner = new HashMap<Partner, ArrayList<Transaction>>();
   private Map<Partner, ArrayList<Transaction>> _acquisitionsByPartner = new HashMap<Partner, ArrayList<Transaction>>();
+
 
   private NotificationStation _notStation = new NotificationStation();
 
@@ -57,6 +59,13 @@ public class Warehouse implements Serializable {
    * @@return warehouse's contabilistic balance
    */
   public double getContabilisticBalance() {
+    _contabilisticBalance = _availableBalance;
+
+    for (Transaction t: _unpaidTransactions) {
+      t.updateRealValue(_date);
+      _contabilisticBalance += t.getRealValue();
+    }
+
     return _contabilisticBalance;
   }
 
@@ -318,6 +327,7 @@ public class Warehouse implements Serializable {
       float price = consumeProducts(product, amount);
       Sale sale = new Sale(_totalTransactions++, partner, product, amount, price, price, deadline); // FIXME
       _transactions.add(sale);
+      _unpaidTransactions.add(sale);
       lookupSalesByPartner(partner).add(sale);
 
       return sale;
@@ -384,14 +394,19 @@ public class Warehouse implements Serializable {
   public void pay(Transaction transaction) {
     transaction.markAsPaid();
 
+    if (_unpaidTransactions.contains(transaction)) { _unpaidTransactions.remove(transaction); }
     _availableBalance += transaction.getRealValue();
-  };
+  }
 
   public Transaction lookupTransaction(int id) {
     return _transactions.get(id);
   }
 
   public ArrayList<Transaction> lookupSalesByPartner(Partner partner) {
+    for (Transaction t: _salesByPartner.get(partner)) {
+      t.updateRealValue(_date);
+    }
+
     return _salesByPartner.get(partner);
   }
 
@@ -428,7 +443,6 @@ public class Warehouse implements Serializable {
 
     if (batch == null) { registerNewBatch(product, partner, price, stock); }
     else { batch.addStock(stock); }
-
 
   }
 

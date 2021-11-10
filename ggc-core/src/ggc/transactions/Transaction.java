@@ -55,5 +55,6 @@ public abstract class Transaction implements Serializable {
 
     public void markAsPaid() {};
 
+    public void updateRealValue(int date) {};
 
 }
