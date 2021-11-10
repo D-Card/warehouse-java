@@ -346,7 +346,7 @@ public class Warehouse implements Serializable {
     }
 
     // If none of the above are successful, throw exception
-    throw new NotEnoughProductsException();
+    throw new NotEnoughProductsException(product.getStock());
   }
 
   public Acquisition acquire(Partner partner, Product product, int amount, float price) {

@@ -3,6 +3,9 @@ package ggc.app.transactions;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
 import ggc.WarehouseManager;
+import ggc.exceptions.NotEnoughProductsException;
+import ggc.app.exceptions.UnavailableProductException;
+
 //FIXME import classes
 
 /**
@@ -12,12 +15,16 @@ public class DoRegisterBreakdownTransaction extends Command<WarehouseManager> {
 
   public DoRegisterBreakdownTransaction(WarehouseManager receiver) {
     super(Label.REGISTER_BREAKDOWN_TRANSACTION, receiver);
-    //FIXME maybe add command fields
+    addStringField("partner", Prompt.partnerKey());
+    addStringField("product", Prompt.productKey());
+    addIntegerField("amount", Prompt.amount());
   }
 
   @Override
   public final void execute() throws CommandException {
-    //FIXME implement command
+    try {
+      _receiver.requestAttemptBreakdown(stringField("partner"), stringField("product"), integerField("amount"));
+    } catch (NotEnoughProductsException e) { throw new UnavailableProductException(stringField("product"), integerField("amount"), e.getCurrentStock()); }
   }
 
 }
