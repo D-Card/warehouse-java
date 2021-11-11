@@ -541,7 +541,7 @@ public class Warehouse implements Serializable {
    */
 
   public Breakdown attemptBreakdown(Partner partner, Product product, int amount) throws NotEnoughProductsException {
-    if (product.getStock() < amount) { throw new NotEnoughProductsException(product.getStock()); } // If not enough stock, fails
+    if (product.getStock() < amount) { throw new NotEnoughProductsException(product.getId(), amount, product.getStock()); } // If not enough stock, fails
     if (product.getRecipe() == null) { return null; } // If product is simple, don't do anything
 
     Recipe recipe = product.getRecipe();
@@ -567,6 +567,7 @@ public class Warehouse implements Serializable {
     Breakdown breakdown = new Breakdown(getTotalTransactions(), partner, product, amount, price, getDate(), receipt);
     pay(breakdown);
     partner.addBreakdown(breakdown);
+    _transactions.add(breakdown);
 
     return breakdown;
   }

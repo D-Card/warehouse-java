@@ -25,11 +25,11 @@ public class DoRegisterBreakdownTransaction extends Command<WarehouseManager> {
     try {
       _receiver.requestAttemptBreakdown(stringField("partner"), stringField("product"), integerField("amount"));
     } catch (NoSuchPartnerException e) {
-      throw new UnknownPartnerKeyException(stringField("partner"));
+      throw new UnknownPartnerKeyException(e.getId());
     } catch (NoSuchProductException e) {
-      throw new UnknownProductKeyException(stringField("product"));
+      throw new UnknownProductKeyException(e.getId());
     } catch (NotEnoughProductsException e) {
-      throw new UnavailableProductException(stringField("product"), integerField("amount"), e.getCurrentStock());
+      throw new UnavailableProductException(e.getProduct(), e.getStockRecquired(), e.getCurrentStock());
     }
 
   }

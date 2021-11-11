@@ -22,7 +22,7 @@ class DoShowPartnerAcquisitions extends Command<WarehouseManager> {
     try {
       _display.popup(_receiver.requestShowPartnerAcquisitions(stringField("partner")));
     } catch (NoSuchPartnerException e) {
-      throw new UnknownPartnerKeyException(stringField("partner"));
+      throw new UnknownPartnerKeyException(e.getId());
     }
   }
 

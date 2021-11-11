@@ -4,25 +4,20 @@ public class NotEnoughProductsException extends Exception {
 
     private static final long serialVersionUID = 202110081036L;
     private int _currentStock = 0;
-    private int _stockNeeded = 0;
-    private String _productStringAsked = "";
+    private int _stockRecquired = 0;
+    private String _product = "";
 
-    public NotEnoughProductsException() {}
-
-    public NotEnoughProductsException(int currentStock) {
+    
+    public NotEnoughProductsException(String p, int stockRecquired, int currentStock) {
         _currentStock = currentStock;
-    }
-
-    public NotEnoughProductsException(String p, int stockNeeded, int currentStock) {
-        _currentStock = currentStock;
-        _stockNeeded = stockNeeded;
-        _productStringAsked = p;
+        _stockRecquired = stockRecquired;
+        _product = p;
     }
 
     public int getCurrentStock() { return _currentStock; }
 
-    public int getStockNeeded() { return _stockNeeded; }
+    public int getStockRecquired() { return _stockRecquired; }
 
-    public String getProduct() { return _productStringAsked; }
+    public String getProduct() { return _product; }
 
 }
