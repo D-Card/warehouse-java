@@ -114,7 +114,6 @@ public class Partner implements Serializable, Comparable<Partner>{
 
     public void addBreakdown(Transaction breakdown) {
         _breakdowns.add(breakdown);
-        _status.updatePoints(breakdown);
     }
 
     public float getTotalSellValue() {
