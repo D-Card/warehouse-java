@@ -278,9 +278,8 @@ public class Warehouse implements Serializable {
   }
 
   /**
-   * @@param id partner's id
-   * @@return partner
-   * @@throws NoSuchProductException
+   * @@param price selected price
+   * @@return batches under given price
    */
 
   public Queue<Batch> listBatchesUnderGivenPrice(float price) {
