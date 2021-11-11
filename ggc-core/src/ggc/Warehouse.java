@@ -12,16 +12,18 @@ import ggc.transactions.*;
  */
 public class Warehouse implements Serializable {
 
-  /**
-   * Serial number for serialization.
-   */
+  /** Serial number for serialization. */
   private static final long serialVersionUID = 202109192006L;
 
-  // TODO - javadocs
+  /** Warehouse's current available balance */
   private double _availableBalance = 0;
+  /** Warehouse's current contabilistic balance */
   private double _contabilisticBalance = 0;
+  /** Warehouse's current date */
   private int _date = 0;
+  /** Set of all the products the warehouse knows */
   private Set<Product> _products = new TreeSet<Product>();
+  /** Map matching products with their id */
   private Map<String, Product> _productLookup = new TreeMap<String, Product>(String.CASE_INSENSITIVE_ORDER);
   private PriorityQueue<Batch> _batches = new PriorityQueue<Batch>();
   private Map<String, Partner> _partnerLookup = new TreeMap<String, Partner>(String.CASE_INSENSITIVE_ORDER);
