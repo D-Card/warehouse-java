@@ -25,7 +25,7 @@ public class Warehouse implements Serializable {
   private Set<Product> _products = new TreeSet<Product>();
   /** Map matching products with their id */
   private Map<String, Product> _productLookup = new TreeMap<String, Product>(String.CASE_INSENSITIVE_ORDER);
-  private PriorityQueue<Batch> _batches = new PriorityQueue<Batch>();
+  private Queue<Batch> _batches = new PriorityQueue<Batch>();
   private Map<String, Partner> _partnerLookup = new TreeMap<String, Partner>(String.CASE_INSENSITIVE_ORDER);
   private Set<Partner> _partners = new TreeSet<Partner>();
 
@@ -125,7 +125,7 @@ public class Warehouse implements Serializable {
   /**
    * @@return sorted list of all batches
    */
-  public PriorityQueue<Batch> listAllBatches() {
+  public Queue<Batch> listAllBatches() {
     return _batches;
   }
 
@@ -133,7 +133,7 @@ public class Warehouse implements Serializable {
    * @@param id id of the partner whose batches are to be listed
    * @@return sorted list of partner's batches
    */
-  public PriorityQueue<Batch> listBatchesByPartner(String partner) throws NoSuchPartnerException {
+  public Queue<Batch> listBatchesByPartner(String partner) throws NoSuchPartnerException {
     return listBatchesByPartner(lookupPartner(partner));
   }
 
@@ -141,7 +141,7 @@ public class Warehouse implements Serializable {
    * @@param partner partner whose batches are to be listed
    * @@return sorted list of partner's batches
    */
-  public PriorityQueue<Batch> listBatchesByPartner(Partner partner) {
+  public Queue<Batch> listBatchesByPartner(Partner partner) {
     return partner.getBatches();
   }
 
@@ -149,7 +149,7 @@ public class Warehouse implements Serializable {
    * @@param id id of the product which batches are to be listed
    * @@return sorted list of batches
    */
-  public PriorityQueue<Batch> listBatchesByProduct(String partner) throws NoSuchProductException{
+  public Queue<Batch> listBatchesByProduct(String partner) throws NoSuchProductException{
     return listBatchesByProduct(lookupProduct(partner));
   }
 
@@ -157,7 +157,7 @@ public class Warehouse implements Serializable {
    * @@param product product which batches are to be listed
    * @@return sorted list of batches
    */
-  public PriorityQueue<Batch> listBatchesByProduct(Product product) {
+  public Queue<Batch> listBatchesByProduct(Product product) {
     return product.getBatches();
   }
 
@@ -255,8 +255,8 @@ public class Warehouse implements Serializable {
     return product;
   }
 
-  public PriorityQueue<Batch> listBatchesUnderGivenPrice(float price) {
-    PriorityQueue<Batch> batchQueue = new PriorityQueue<Batch>();
+  public Queue<Batch> listBatchesUnderGivenPrice(float price) {
+    Queue<Batch> batchQueue = new PriorityQueue<Batch>();
 
     for (Batch b : listAllBatches()) {
       if (b.getPrice() < price) {
@@ -276,7 +276,7 @@ public class Warehouse implements Serializable {
   // Transactions ------------------------------------------------------------------------------------------------------
 
   public Batch getCheapestBatch(Product product) {
-    PriorityQueue<Batch> batchesByProduct = listBatchesByProduct(product);
+    Queue<Batch> batchesByProduct = listBatchesByProduct(product);
     Batch cheapestBatch = null;
     float cheapestPrice = -1;
 
