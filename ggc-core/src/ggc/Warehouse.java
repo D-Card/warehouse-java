@@ -403,15 +403,13 @@ public class Warehouse implements Serializable {
   }
 
   public Sale attemptSale(String partnerStr, String productStr, int amount, int deadline) throws NotEnoughProductsException, NoSuchPartnerException, NoSuchProductException {
-
     Partner partner = lookupPartner(partnerStr);
     Product product = lookupProduct(productStr);
     return attemptSale(partner, product, amount, deadline);
   }
-   
 
   public Sale attemptSale(Partner partner, Product product, int amount, int deadline) throws NotEnoughProductsException {
-    if (product.getStock() <= amount) { // Check if product stock is directly enough to sell
+    if (product.getStock() >= amount) { // Check if product stock is directly enough to sell
       float price = consumeProducts(product, amount);
       Sale sale = new Sale(getTotalTransactions(), partner, product, amount, price, price, deadline); // FIXME
       _transactions.add(sale);
@@ -422,7 +420,7 @@ public class Warehouse implements Serializable {
     } else { // If product stock isn't enough, check if difference between stock and requested amount can be crafted
       int stockNeeded = amount - product.getStock(); // Calculate difference
 
-      if (product.enoughStock(amount)) { // Check if it can be crafted
+      if (product.enoughStock(amount) && product.getRecipe() != null) { // Check if it can be crafted
         craftProduct((ProductDerivative) product, partner, stockNeeded); // Craft the product
         return attemptSale(partner, product, amount, deadline); // Try to sell again
       }
@@ -458,9 +456,6 @@ public class Warehouse implements Serializable {
     _transactions.add(acquisition);
     lookupAcquisitionsByPartner(partner).add(acquisition);
 
-    _availableBalance -= acquisition.getRealValue();
-    _contabilisticBalance -= acquisition.getRealValue();
-
     return acquisition;
   }
 
@@ -471,9 +466,8 @@ public class Warehouse implements Serializable {
     return attemptBreakdown(partner, product, amount);
   }
 
-
   public Breakdown attemptBreakdown(Partner partner, Product product, int amount) throws NotEnoughProductsException {
-    if (product.getStock() < amount) { throw new NotEnoughProductsException(); } // If not enough stock, fails
+    if (product.getStock() < amount) { throw new NotEnoughProductsException(product.getStock()); } // If not enough stock, fails
     if (product.getRecipe() == null) { return null; } // If product is simple, don't do anything
 
     Recipe recipe = product.getRecipe();
@@ -499,6 +493,7 @@ public class Warehouse implements Serializable {
     Breakdown breakdown = new Breakdown(getTotalTransactions(), partner, product, amount, price, getDate(), receipt);
     pay(breakdown);
     _contabilisticBalance += breakdown.getRealValue();
+    partner.addBreakdown(breakdown);
 
     return breakdown;
   }
@@ -509,7 +504,7 @@ public class Warehouse implements Serializable {
   }
 
   public void pay(Transaction transaction) {
-    transaction.markAsPaid();
+    transaction.markAsPaid(_date);
 
     _availableBalance += transaction.getRealValue();
   }

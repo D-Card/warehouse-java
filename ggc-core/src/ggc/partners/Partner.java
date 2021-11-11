@@ -17,14 +17,12 @@ public class Partner implements Serializable, Comparable<Partner>{
     private String _address;
     private Status _status = new NormalStatus();
     private float _points = 0;
-    private float _buyTotalValue = 0;
-    private float _sellTotalValue = 0;
-    private float _sellPaidValue = 0;
     private Mailbox _mailbox = new Mailbox();
     private PriorityQueue<Batch> _batches = new PriorityQueue<Batch>();
 
     private ArrayList<Transaction> _sales = new ArrayList<Transaction>();
     private ArrayList<Transaction> _acquisitions = new ArrayList<Transaction>();
+    private ArrayList<Transaction> _breakdowns = new ArrayList<Transaction>();
 
     public Partner(String id, String name, String address) {
         _id = id;
@@ -63,7 +61,13 @@ public class Partner implements Serializable, Comparable<Partner>{
 
     public PriorityQueue<Batch> getBatches() { return _batches; }
 
-    public ArrayList<Transaction> getSales() { return _sales; }
+    public ArrayList<Transaction> getSales() {
+        ArrayList<Transaction> sales = new ArrayList<Transaction>(_sales); // Create a shallow copy
+        sales.addAll(_breakdowns);
+        sales.sort(null);
+
+        return sales;
+    }
 
     public ArrayList<Transaction> getAcquisitions() { return _acquisitions; }
 
@@ -114,11 +118,23 @@ public class Partner implements Serializable, Comparable<Partner>{
 
     public void addSale(Transaction sale) { _sales.add(sale); }
 
+    public void addBreakdown(Transaction breakdown) { _breakdowns.add(breakdown); }
+
     public float getTotalSellValue() {
         float value = 0;
 
         for (Transaction t: _sales) {
-            value += t.getRealValue() * t.getAmount();
+            value += t.getBaseValue();
+        }
+
+        return value;
+    }
+
+    public float getTotalPaidValue() {
+        float value = 0;
+
+        for (Transaction t: _sales) {
+            value += t.getRealValue();
         }
 
         return value;
@@ -138,7 +154,7 @@ public class Partner implements Serializable, Comparable<Partner>{
 
     @Override
     public String toString() {
-        return _id + "|" + _name + "|" + _address + "|" + _status + "|" + Math.round(_points) + "|" + Math.round(getTotalBuyValue()) + "|" + Math.round(getTotalSellValue()) + "|" + Math.round(_sellPaidValue);
+        return _id + "|" + _name + "|" + _address + "|" + _status + "|" + Math.round(_points) + "|" + Math.round(getTotalBuyValue()) + "|" + Math.round(getTotalSellValue()) + "|" + Math.round(getTotalPaidValue());
     }
 
     @Override
