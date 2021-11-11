@@ -1,19 +1,20 @@
-package ggc.transactions;
+package ggc.partners;
 import java.io.*;
 import java.util.*;
 import ggc.partners.Partner;
 import ggc.products.Product;
+import ggc.transactions.Transaction;
 
-public class SelectionStatus extends Status implements Serializable {
+public class EliteStatus extends Status implements Serializable {
 
-    private static final long serialVersionUID = 202111081425L;
-    private static final String str = "SELECTION";
+    private static final long serialVersionUID = 202111081421L;
+    private static final String str = "ELITE";
 
-    public SelectionStatus(Partner partner) {
+    public EliteStatus(Partner partner) {
         super(partner);
     }
 
-    public SelectionStatus(Partner partner, float points) {
+    public EliteStatus(Partner partner, float points) {
         super(partner, points);
     }
 
@@ -22,13 +23,11 @@ public class SelectionStatus extends Status implements Serializable {
             case (1): // Period 1
                 return (baseValue * 0.9f);
             case (2): // Period 2
-                if (dayDifference >= 2) { return (baseValue * 0.95f); }
-                else { return (baseValue); }
+                return (baseValue * 0.9f);
             case (3): // Period 3
-                if (dayDifference > 1) { return (baseValue * (1 + dayDifference * 0.02f)); }
-                else { return (baseValue); }
+                return (baseValue * 0.95f);
             case (4): // Period 4
-                return (baseValue * (1 + dayDifference * 0.05f));
+                return (baseValue);
         }
 
         return (baseValue);
@@ -38,10 +37,10 @@ public class SelectionStatus extends Status implements Serializable {
         if (transaction.getRealValue() >= 0) {
             float newPoints;
 
-            if (transaction.getPaidDate() <= transaction.getDeadline() + 2) { // 2 day tolerance
+            if (transaction.getPaidDate() <= transaction.getDeadline() + 15) { // 15 day tolerance
                 newPoints = (getPoints() + transaction.getRealValue() * 10);
             } else {
-                newPoints = (getPoints() * 0.1f);
+                newPoints = (getPoints() * 0.25f);
             }
 
             setPoints(newPoints);

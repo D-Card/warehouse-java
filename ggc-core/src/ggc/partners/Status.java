@@ -1,8 +1,9 @@
-package ggc.transactions;
+package ggc.partners;
 import java.io.*;
 import java.util.*;
 import ggc.partners.Partner;
 import ggc.products.Product;
+import ggc.transactions.Transaction;
 
 public abstract class Status implements Serializable {
 
