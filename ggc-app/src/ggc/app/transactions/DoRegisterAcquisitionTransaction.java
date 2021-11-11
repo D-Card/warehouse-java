@@ -35,11 +35,12 @@ public class DoRegisterAcquisitionTransaction extends Command<WarehouseManager> 
       throw new UnknownPartnerKeyException(stringField("partner"));
     } catch (NoSuchProductException e) {
       if (!Form.confirm(Prompt.addRecipe())) { // If it's a simple product
-        _receiver.requestRegisterProductSimple(
+        try {_receiver.requestAcquireNewProductSimple(
                 stringField("partner"),
                 stringField("product"),
                 realField("price").floatValue(),
                 integerField("amount"));
+        } catch (NoSuchPartnerException | NoSuchProductException e2) {} //this never happens
       } else { // If it's a derivative product
         int productsLeft = Form.requestInteger(Prompt.numberOfComponents());
         float multiplier = Form.requestReal(Prompt.alpha()).floatValue();
@@ -52,8 +53,8 @@ public class DoRegisterAcquisitionTransaction extends Command<WarehouseManager> 
 
           productsLeft --;
         }
-
-        _receiver.requestRegisterProductDerivative(
+        try{
+        _receiver.requestAcquireNewProductDerivative(
                 stringField("partner"),
                 stringField("product"),
                 realField("price").floatValue(),
@@ -61,6 +62,7 @@ public class DoRegisterAcquisitionTransaction extends Command<WarehouseManager> 
                 productStrings,
                 productQuantities,
                 multiplier);
+      } catch (NoSuchPartnerException | NoSuchProductException e3) {} //this never happens
       }
 
     } catch (NotEnoughProductsException e) {}

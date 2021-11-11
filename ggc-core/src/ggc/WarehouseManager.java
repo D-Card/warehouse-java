@@ -49,12 +49,12 @@ public class WarehouseManager {
     return _warehouse.listAllBatches();
   }
 
-  public PriorityQueue<Batch> requestListBatchesByProduct(String id) throws NoSuchProductException {
-    return _warehouse.listBatchesByProduct(_warehouse.lookupProduct(id));
+  public PriorityQueue<Batch> requestListBatchesByProduct(String product) throws NoSuchProductException {
+    return _warehouse.listBatchesByProduct(product);
   }
 
-  public PriorityQueue<Batch> requestListBatchesByPartner(String id) throws NoSuchPartnerException {
-    return _warehouse.listBatchesByPartner(_warehouse.lookupPartner(id));
+  public PriorityQueue<Batch> requestListBatchesByPartner(String partner) throws NoSuchPartnerException {
+    return _warehouse.listBatchesByPartner(partner);
   }
 
   public void requestRegisterPartner(String id, String name, String address) throws DuplicatePartnerException {
@@ -66,44 +66,35 @@ public class WarehouseManager {
     return _warehouse.listAllPartners();
   }
 
-  public Partner requestShowPartner(String id) throws NoSuchPartnerException {
-    return _warehouse.lookupPartner(id);
+  public Partner requestShowPartner(String partner) throws NoSuchPartnerException {
+    return _warehouse.lookupPartner(partner);
   }
 
-  public List<Notification> requestListPartnerNotifications(String id) throws NoSuchPartnerException {
-    return _warehouse.listPartnerNotifications(_warehouse.lookupPartner(id));
+  public List<Notification> requestListPartnerNotifications(String partner) throws NoSuchPartnerException {
+    return _warehouse.listPartnerNotifications(partner);
   }
 
-  public List<Notification> requestListPartnerNotificationsByMethod(String id, String method) throws NoSuchPartnerException {
-    return _warehouse.listPartnerNotificationsByMethod(_warehouse.lookupPartner(id), method);
+  public List<Notification> requestListPartnerNotificationsByMethod(String partner, String method) throws NoSuchPartnerException {
+    return _warehouse.listPartnerNotificationsByMethod(partner, method);
   }
 
   public PriorityQueue<Batch> requestListBatchesUnderGivenPrice(float price) {
     return _warehouse.listBatchesUnderGivenPrice(price);
   }
 
-  public void requestToggleProductNotifications(String partnerStr, String productStr) throws NoSuchPartnerException, NoSuchProductException {
-    Partner partner = _warehouse.lookupPartner(partnerStr);
-    Product product = _warehouse.lookupProduct(productStr);
-
-    _warehouse.toggleProductNotifications(partner, product);
+  public void requestToggleProductNotifications(String partner, String product) throws NoSuchPartnerException, NoSuchProductException {
+   _warehouse.toggleProductNotifications(partner, product);
   }
 
-  public ArrayList<Transaction> requestShowPartnerPaidSales(String id) throws NoSuchPartnerException {
-    Partner partner = _warehouse.lookupPartner(id);
-
+  public ArrayList<Transaction> requestShowPartnerPaidSales(String partner) throws NoSuchPartnerException {
     return _warehouse.lookupPaidSalesByPartner(partner);
   }
 
-  public ArrayList<Transaction> requestShowPartnerSales(String id) throws NoSuchPartnerException {
-    Partner partner = _warehouse.lookupPartner(id);
-
+  public ArrayList<Transaction> requestShowPartnerSales(String partner) throws NoSuchPartnerException {
     return _warehouse.lookupSalesByPartner(partner);
   }
 
-  public ArrayList<Transaction> requestShowPartnerAcquisitions(String id) throws NoSuchPartnerException {
-    Partner partner = _warehouse.lookupPartner(id);
-
+  public ArrayList<Transaction> requestShowPartnerAcquisitions(String partner) throws NoSuchPartnerException {
     return _warehouse.lookupAcquisitionsByPartner(partner);
   }
 
@@ -112,54 +103,28 @@ public class WarehouseManager {
   }
 
   public void requestPay(int id) throws NoSuchTransactionException {
-    _warehouse.pay(_warehouse.lookupTransaction(id));
+    _warehouse.pay(id);
   }
 
-    public void requestAttemptBreakdown(String partnerString, String productString, int amount) throws NotEnoughProductsException, NoSuchPartnerException, NoSuchProductException {
-    Partner partner = _warehouse.lookupPartner(partnerString);
-    Product product = _warehouse.lookupProduct(productString);
-
+    public void requestAttemptBreakdown(String partner, String product, int amount) throws NotEnoughProductsException, NoSuchPartnerException, NoSuchProductException {
     _warehouse.attemptBreakdown(partner, product, amount);
   }
 
-  public void requestAttemptSale(String partnerString, int deadline, String productString, int amount) throws NotEnoughProductsException, NoSuchPartnerException, NoSuchProductException {
-    Partner partner = _warehouse.lookupPartner(partnerString);
-    Product product = _warehouse.lookupProduct(productString);
-
+  public void requestAttemptSale(String partner, int deadline, String product, int amount) throws NotEnoughProductsException, NoSuchPartnerException, NoSuchProductException {
     _warehouse.attemptSale(partner, product, amount, deadline);
   }
 
-  public void requestAcquire(String partnerString, String productString, float price, int amount) throws NotEnoughProductsException, NoSuchPartnerException, NoSuchProductException {
-    Partner partner = _warehouse.lookupPartner(partnerString);
-    Product product = _warehouse.lookupProduct(productString);
-
+  public void requestAcquire(String partner, String product, float price, int amount) throws NotEnoughProductsException, NoSuchPartnerException, NoSuchProductException {
     _warehouse.acquire(partner, product, amount, price);
   }
 
-  public void requestRegisterProductSimple(String partnerString, String productString, float price, int stock){
-    try {
-      Partner partner = _warehouse.lookupPartner(partnerString);
-      _warehouse.registerProductSimple(productString, price, stock);
-      Product product = _warehouse.lookupProduct(productString);
-
-      _warehouse.acquire(partner, product, stock, price);
-    } catch (NoSuchPartnerException | NoSuchProductException e) {}
+  public void requestAcquireNewProductSimple(String partner, String product, float price, int stock) throws NoSuchPartnerException, NoSuchProductException{
+    //runs when acquiring a never seen simple product
+    _warehouse.acquireNewProductSimple(partner, product, price, stock);
   }
 
-  public void requestRegisterProductDerivative(String partnerString, String productString, float price, int stock, ArrayList<String> products, ArrayList<Integer> productQuantities, float multiplier) {
-    try {
-      Partner partner = _warehouse.lookupPartner(partnerString);
-      Recipe recipe = new Recipe();
-
-      for (int i = 0; i < products.size(); i++) {
-        recipe.addProduct(_warehouse.lookupProduct(products.get(i)), productQuantities.get(i));
-      }
-
-      _warehouse.registerProductDerivative(productString, recipe, multiplier, price, stock);
-      Product product = _warehouse.lookupProduct(productString);
-
-      _warehouse.acquire(partner, product, stock, price);
-    } catch (NoSuchPartnerException | NoSuchProductException e) {}
+  public void requestAcquireNewProductDerivative(String partner, String product, float price, int stock, ArrayList<String> products, ArrayList<Integer> productQuantities, float multiplier) throws NoSuchPartnerException, NoSuchProductException{
+    _warehouse.acquireNewProductDerivative(partner, product, price, stock, products, productQuantities, multiplier);
   }
 
   /**

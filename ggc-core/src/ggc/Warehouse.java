@@ -115,11 +115,27 @@ public class Warehouse implements Serializable {
   }
 
   /**
+   * @@param id id of the partner whose batches are to be listed
+   * @@return sorted list of partner's batches
+   */
+  public PriorityQueue<Batch> listBatchesByPartner(String partner) throws NoSuchPartnerException {
+    return listBatchesByPartner(lookupPartner(partner));
+  }
+
+  /**
    * @@param partner partner whose batches are to be listed
    * @@return sorted list of partner's batches
    */
   public PriorityQueue<Batch> listBatchesByPartner(Partner partner) {
     return partner.getBatches();
+  }
+
+  /**
+   * @@param id id of the product which batches are to be listed
+   * @@return sorted list of batches
+   */
+  public PriorityQueue<Batch> listBatchesByProduct(String partner) throws NoSuchProductException{
+    return listBatchesByProduct(lookupProduct(partner));
   }
 
   /**
@@ -130,16 +146,18 @@ public class Warehouse implements Serializable {
     return product.getBatches();
   }
 
-  /**
-   * @@param partner partner whose notifications are to be listed
+
+    /**
+   * @@param id id of the partner whose notifications are to be listed
    * @@return list of all selected partner's notifications
    */
-  public List<Notification> listPartnerNotifications(Partner partner) {
-    return partner.listAllNotifications();
+  public List<Notification> listPartnerNotifications(String id) throws NoSuchPartnerException{
+    return lookupPartner(id).listAllNotifications();
   }
 
-  public List<Notification> listPartnerNotificationsByMethod(Partner partner, String method) {
-    return partner.listAllNotificationsByMethod(method);
+
+  public List<Notification> listPartnerNotificationsByMethod(String id, String method) throws NoSuchPartnerException{
+    return lookupPartner(id).listAllNotificationsByMethod(method);
   }
 
   /**
@@ -235,7 +253,9 @@ public class Warehouse implements Serializable {
     return batchQueue;
   }
 
-  public void toggleProductNotifications(Partner partner, Product product) {
+  public void toggleProductNotifications(String partnerStr, String productStr) throws NoSuchPartnerException, NoSuchProductException {
+    Partner partner = lookupPartner(partnerStr);
+    Product product = lookupProduct(productStr);
     partner.getMailbox().toggleBlockedProduct(product);
   }
 
@@ -319,6 +339,14 @@ public class Warehouse implements Serializable {
     }
   }
 
+  public Sale attemptSale(String partnerStr, String productStr, int amount, int deadline) throws NotEnoughProductsException, NoSuchPartnerException, NoSuchProductException {
+
+    Partner partner = lookupPartner(partnerStr);
+    Product product = lookupProduct(productStr);
+    return attemptSale(partner, product, amount, deadline);
+  }
+   
+
   public Sale attemptSale(Partner partner, Product product, int amount, int deadline) throws NotEnoughProductsException {
     if (product.getStock() <= amount) { // Check if product stock is directly enough to sell
       float price = consumeProducts(product, amount);
@@ -341,6 +369,12 @@ public class Warehouse implements Serializable {
     throw new NotEnoughProductsException(product.getStock());
   }
 
+  public Acquisition acquire(String partnerStr, String productStr, int amount, float price) throws NoSuchPartnerException, NoSuchProductException{
+    Partner partner = lookupPartner(partnerStr);
+    Product product = lookupProduct(productStr);
+    return acquire(partner, product, amount, price);
+  }
+
   public Acquisition acquire(Partner partner, Product product, int amount, float price) {
     _availableBalance -= amount * price;
     _contabilisticBalance -= amount * price;
@@ -357,6 +391,14 @@ public class Warehouse implements Serializable {
 
     return acquisition;
   }
+
+
+  public Breakdown attemptBreakdown(String partnerStr, String productStr, int amount) throws NotEnoughProductsException, NoSuchPartnerException, NoSuchProductException {
+    Partner partner = lookupPartner(partnerStr);
+    Product product = lookupProduct(productStr);
+    return attemptBreakdown(partner, product, amount);
+  }
+
 
   public Breakdown attemptBreakdown(Partner partner, Product product, int amount) throws NotEnoughProductsException {
     if (product.getStock() < amount) { throw new NotEnoughProductsException(); } // If not enough stock, fails
@@ -390,6 +432,11 @@ public class Warehouse implements Serializable {
     return breakdown;
   }
 
+  public void pay(int id) throws NoSuchTransactionException{
+    Transaction transaction = lookupTransaction(id);
+    pay(transaction);
+  }
+
   public void pay(Transaction transaction) {
     transaction.markAsPaid();
 
@@ -401,7 +448,8 @@ public class Warehouse implements Serializable {
     _availableBalance += transaction.getRealValue();
   }
 
-  public ArrayList<Transaction> lookupPaidSalesByPartner(Partner partner) {
+  public ArrayList<Transaction> lookupPaidSalesByPartner(String partnerStr) throws NoSuchPartnerException{
+    Partner partner = lookupPartner(partnerStr);
     for (Transaction t: _salesPaidByPartner.get(partner)) {
       t.updateRealValue(_date);
     }
@@ -417,7 +465,40 @@ public class Warehouse implements Serializable {
     return _salesByPartner.get(partner);
   }
 
-  public ArrayList<Transaction> lookupAcquisitionsByPartner(Partner partner) {
+    public ArrayList<Transaction> lookupSalesByPartner(String partnerStr) throws NoSuchPartnerException{
+      Partner partner = lookupPartner(partnerStr);
+      for (Transaction t: _salesByPartner.get(partner)) {
+        t.updateRealValue(_date);
+      }
+
+      return _salesByPartner.get(partner);
+    }
+      
+  public void acquireNewProductSimple(String partner, String product, float price, int stock) throws NoSuchPartnerException, NoSuchProductException{
+    registerProductSimple(product, price, stock);
+    acquire(partner, product, stock, price);
+  }
+
+
+  public void acquireNewProductDerivative(String partnerStr, String productStr, float price, int stock, ArrayList<String> products, ArrayList<Integer> productQuantities, float multiplier) throws NoSuchPartnerException, NoSuchProductException {
+      Partner partner = lookupPartner(partnerStr);
+      Recipe recipe = new Recipe();
+
+      for (int i = 0; i < products.size(); i++) {
+        recipe.addProduct(lookupProduct(products.get(i)), productQuantities.get(i));
+      }
+
+      registerProductDerivative(productStr, recipe, multiplier, price, stock);
+      Product product = lookupProduct(productStr);
+
+      acquire(partner, product, stock, price);
+  }  
+
+  public ArrayList<Transaction> lookupAcquisitionsByPartner(String partner) throws NoSuchPartnerException{
+    return _acquisitionsByPartner.get(lookupPartner(partner));
+  }
+
+  public ArrayList<Transaction> lookupAcquisitionsByPartner(Partner partner){
     return _acquisitionsByPartner.get(partner);
   }
 
