@@ -27,7 +27,7 @@ public class Receipt implements Serializable{
         for (Product p: _recipe.getProducts()) {
             currentString += (p.getId() + ":" + _recipe.getProductQuantity(p) * _quantity + ":" + Math.round(_recipe.getProductQuantity(p) * _productPrices.get(p) * _quantity)) + "#";
         }
-        
+
         return currentString.substring(0, currentString.length()-1); // Remove last #
     }
 }

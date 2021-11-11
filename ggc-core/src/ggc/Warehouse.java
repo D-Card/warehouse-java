@@ -353,6 +353,7 @@ public class Warehouse implements Serializable {
   public float consumeProducts(Product product, int quantity) { // Returns the price of all of the products summed together
     float price = 0;
     Batch currentBatch;
+    product.addStock(-quantity);
 
     while (quantity > 0) {
       currentBatch = getCheapestBatch(product);
@@ -366,6 +367,7 @@ public class Warehouse implements Serializable {
         currentBatch.addStock(-quantity);
         quantity = 0;
       }
+
     }
 
     return price;
@@ -414,20 +416,23 @@ public class Warehouse implements Serializable {
       Sale sale = new Sale(getTotalTransactions(), partner, product, amount, price, price, deadline); // FIXME
       _transactions.add(sale);
       partner.addSale(sale);
-      product.addStock(-amount);
 
       return sale;
     } else { // If product stock isn't enough, check if difference between stock and requested amount can be crafted
       int stockNeeded = amount - product.getStock(); // Calculate difference
 
-      if (product.enoughStock(amount) && product.getRecipe() != null) { // Check if it can be crafted
-        craftProduct((ProductDerivative) product, partner, stockNeeded); // Craft the product
-        return attemptSale(partner, product, amount, deadline); // Try to sell again
+      if (product.enoughStock(amount)) { // Check if it can be crafted
+        if (product.getRecipe() != null) {
+          craftProduct((ProductDerivative) product, partner, stockNeeded); // Craft the product
+          return attemptSale(partner, product, amount, deadline); // Try to sell again
+        }
+      } else {
+        product.throwFirstMissingSimpleProduct(stockNeeded);
       }
     }
 
     // If none of the above are successful, throw exception
-    throw new NotEnoughProductsException(product.getStock());
+    throw new NotEnoughProductsException(product.getId(), amount, product.getStock());
   }
 
   public Acquisition acquire(String partnerStr, String productStr, int amount, float price, boolean newProduct) throws NoSuchPartnerException, NoSuchProductException{

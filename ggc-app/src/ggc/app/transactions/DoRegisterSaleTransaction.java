@@ -33,7 +33,7 @@ public class DoRegisterSaleTransaction extends Command<WarehouseManager> {
     } catch (NoSuchProductException e) {
       throw new UnknownProductKeyException(stringField("product"));
     } catch (NotEnoughProductsException e) {
-      throw new UnavailableProductException(stringField("product"), integerField("amount"), e.getCurrentStock());
+      throw new UnavailableProductException(e.getProduct(), e.getStockNeeded(), e.getCurrentStock());
     }
   }
 
