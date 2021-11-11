@@ -56,9 +56,9 @@ public abstract class Transaction implements Serializable, Comparable<Transactio
 
     public abstract float getBaseValue();
 
-    public void markAsPaid(int date) {};
+    public abstract void markAsPaid(int date);
 
-    public void updateRealValue(int date) {};
+    public abstract void updateRealValue(int date);
 
     public boolean paid() { return _paid; }
 

@@ -21,6 +21,10 @@ public class Acquisition extends Transaction implements Serializable {
         _paidDate = paidDate;
     }
 
+    public void markAsPaid(int date){};
+
+    public void updateRealValue(int date){};
+
     //Getters
     public float getRealValue() {
         return _realValue;
