@@ -25,12 +25,15 @@ public class Warehouse implements Serializable {
   private Set<Product> _products = new TreeSet<Product>();
   /** Map matching products with their id */
   private Map<String, Product> _productLookup = new TreeMap<String, Product>(String.CASE_INSENSITIVE_ORDER);
+  /** Queue of all batches in warehouse */
   private Queue<Batch> _batches = new PriorityQueue<Batch>();
+  /** Map matching partners with their id */
   private Map<String, Partner> _partnerLookup = new TreeMap<String, Partner>(String.CASE_INSENSITIVE_ORDER);
+  /** Set of all the partners the warehouse has */
   private Set<Partner> _partners = new TreeSet<Partner>();
-
+  /** List of all the transactions made in the warehouse */
   private ArrayList<Transaction> _transactions = new ArrayList<Transaction>();
-
+  /** Warehouse's notification station */
   private NotificationStation _notStation = new NotificationStation();
 
   // Getters
