@@ -4,6 +4,7 @@ import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
 import ggc.WarehouseManager;
 import ggc.exceptions.NoSuchPartnerException;
+import ggc.app.exceptions.UnknownPartnerKeyException;
 //FIXME import classes
 
 /**
@@ -20,7 +21,9 @@ public class DoLookupPaymentsByPartner extends Command<WarehouseManager> {
   public void execute() throws CommandException {
     try {
       _display.popup(_receiver.requestShowPartnerPaidSales(stringField("partner")));
-    } catch (NoSuchPartnerException e) {}
+    } catch (NoSuchPartnerException e) {
+      throw new UnknownPartnerKeyException(stringField("partner"));
+    }
   }
 
 }

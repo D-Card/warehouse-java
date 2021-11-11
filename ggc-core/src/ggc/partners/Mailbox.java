@@ -20,6 +20,7 @@ public class Mailbox implements Serializable{
         if (!checkIfProductBlocked(notification.getProduct())) {
             _notifications.add(notification);
         }
+
     }
 
     private void clearNotifications() { _notifications.clear(); }

@@ -6,6 +6,7 @@ import ggc.WarehouseManager;
 import ggc.exceptions.NoSuchProductException;
 import ggc.exceptions.NoSuchPartnerException;
 import ggc.app.exceptions.UnknownProductKeyException;
+import ggc.app.exceptions.UnknownPartnerKeyException;
 //FIXME import classes
 
 /**
@@ -25,7 +26,9 @@ class DoToggleProductNotifications extends Command<WarehouseManager> {
       _receiver.requestToggleProductNotifications(stringField("partner"), stringField("product"));
     } catch (NoSuchProductException e) {
       throw new UnknownProductKeyException(stringField("product"));
-    } catch (NoSuchPartnerException e) {};
+    } catch (NoSuchPartnerException e) {
+      throw new UnknownPartnerKeyException(stringField("partner"));
+    }
   }
 
 }

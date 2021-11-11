@@ -46,6 +46,16 @@ public class ProductDerivative extends Product {
         return true;
     }
 
+    public void throwFirstMissingSimpleProduct(int amount) throws NotEnoughProductsException {
+        if (amount <= getStock()) return;
+
+        for (Product p: _recipe.getProducts()) {
+            p.throwFirstMissingSimpleProduct(amount * _recipe.getProductQuantity(p));
+        }
+
+        return;
+    }
+
 
     @Override
     public String toString() {

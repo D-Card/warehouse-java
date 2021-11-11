@@ -42,6 +42,8 @@ public class Sale extends Transaction implements Serializable {
         return _paidDate;
     }
 
+    public int getDeadline() { return _deadline; }
+
     //Setters
     public void setBaseValue(float baseValue) {
         _baseValue = baseValue;
@@ -95,10 +97,13 @@ public class Sale extends Transaction implements Serializable {
 
     @Override
     public String toString() {
-        String text = "VENDA|" + getId() + "|" + getPartner().getId() + "|" + getProduct().getId() + "|" + getAmount() + "|" + Math.round(getBaseValue()) + "|" + Math.round(getRealValue()) + "|" + getLimitDate();
-        if (getPaidDate() != -1) {
-            text += "|" + getPaidDate();
+        String text = "VENDA|" + getId() + "|" + getPartner().getId() + "|" + getProduct().getId() + "|" + getAmount()
+                + "|" + Math.round(getBaseValue()) + "|" + Math.round(getRealValue()) + "|" + getLimitDate();
+
+        if (_paid) {
+            return (text + "|" + getPaidDate());
         }
+
         return text;
     }
 }

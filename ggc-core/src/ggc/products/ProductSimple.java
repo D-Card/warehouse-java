@@ -14,6 +14,11 @@ public class ProductSimple extends Product {
 
     public boolean enoughStock(int amount) { return (amount <= getStock()); }
 
+    public void throwFirstMissingSimpleProduct(int amount) throws NotEnoughProductsException {
+        if (amount <= getStock()) { return; }
+        else { throw new NotEnoughProductsException(getId(), amount, getStock()); }
+    }
+
     @Override
     public String toString() {
         return getId() + "|" + Math.round(getMaxPrice()) + "|" + getStock();

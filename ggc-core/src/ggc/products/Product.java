@@ -60,6 +60,8 @@ public abstract class Product implements Serializable, Comparable<Product>{
 
     public void removeBatch(Batch batch) { _batches.remove(batch); }
 
+    public abstract void throwFirstMissingSimpleProduct(int amount) throws NotEnoughProductsException;
+
     @Override
     public int compareTo(Product product) {
         Collator collator = Collator.getInstance(Locale.getDefault());

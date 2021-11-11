@@ -6,7 +6,7 @@ import ggc.exceptions.*;
 
 public class Receipt implements Serializable{
 
-    private static final long serialVersionUID = 202110262344L;
+    private static final long serialVersionUID = 202110282344L;
 
     private Map<Product, Float> _productPrices = new HashMap<Product, Float>();
     private Recipe _recipe;
@@ -25,11 +25,9 @@ public class Receipt implements Serializable{
         String currentString = "";
 
         for (Product p: _recipe.getProducts()) {
-            currentString += (p.getId() + ":" + _recipe.getProductQuantity(p) * _quantity + ":" + _productPrices.get(p)) + "#";
+            currentString += (p.getId() + ":" + _recipe.getProductQuantity(p) * _quantity + ":" + Math.round(_recipe.getProductQuantity(p) * _productPrices.get(p) * _quantity)) + "#";
         }
 
-        currentString.substring(0, currentString.length()-1); // Remove last #
-
-        return currentString;
+        return currentString.substring(0, currentString.length()-1); // Remove last #
     }
 }

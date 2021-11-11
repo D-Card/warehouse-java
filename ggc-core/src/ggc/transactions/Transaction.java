@@ -4,7 +4,7 @@ import java.util.*;
 import ggc.partners.Partner;
 import ggc.products.Product;
 
-public abstract class Transaction implements Serializable {
+public abstract class Transaction implements Serializable, Comparable<Transaction> {
 
     private static final long serialVersionUID = 202110270052L;
 
@@ -54,10 +54,16 @@ public abstract class Transaction implements Serializable {
 
     public abstract float getRealValue();
 
-    public void markAsPaid() {};
+    public abstract float getBaseValue();
+
+    public void markAsPaid(int date) {};
 
     public void updateRealValue(int date) {};
 
     public boolean paid() { return _paid; }
+
+    public int compareTo(Transaction transaction) {
+        return (transaction.getId() - _id);
+    }
 
 }

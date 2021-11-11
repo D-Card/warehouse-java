@@ -26,6 +26,10 @@ public class Acquisition extends Transaction implements Serializable {
         return _realValue;
     }
 
+    public float getBaseValue() {
+        return _realValue;
+    }
+
     public int getPaidDate() {
         return _paidDate;
     }
@@ -38,9 +42,8 @@ public class Acquisition extends Transaction implements Serializable {
         _paidDate = paidDate;
     }
 
-
     @Override
     public String toString() {
-        return "COMPRA|" + getId() + "|" + getPartner().getId() + "|" + getProduct().getId() + "|" + getAmount() + "|" + Math.round(getRealValue()) + "|" + getPaidDate();
+        return "COMPRA|" + getId() + "|" + getPartner().getId() + "|" + getProduct().getId() + "|" + getAmount() + "|" + Math.round(getRealValue() * getAmount()) + "|" + getPaidDate();
     }
 }

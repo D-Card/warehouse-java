@@ -133,8 +133,14 @@ public class Warehouse implements Serializable {
   /**
    * @@return sorted list of all batches
    */
-  public Queue<Batch> listAllBatches() {
-    return _batches;
+  public ArrayList<Batch> listAllBatches() {
+    updateBatches();
+
+    ArrayList<Batch> batchList = new ArrayList<Batch>(_batches);
+
+    batchList.sort(null);
+
+    return batchList;
   }
 
   /**
@@ -142,7 +148,7 @@ public class Warehouse implements Serializable {
    * @@return sorted list of partner's batches
    * @@throws NoSuchPartnerException
    */
-  public Queue<Batch> listBatchesByPartner(String partner) throws NoSuchPartnerException {
+  public List<Batch> listBatchesByPartner(String partner) throws NoSuchPartnerException {
     return listBatchesByPartner(lookupPartner(partner));
   }
 
@@ -150,8 +156,14 @@ public class Warehouse implements Serializable {
    * @@param partner partner whose batches are to be listed
    * @@return sorted list of partner's batches
    */
-  public Queue<Batch> listBatchesByPartner(Partner partner) {
-    return partner.getBatches();
+  public List<Batch> listBatchesByPartner(Partner partner) {
+    updateBatches();
+
+    ArrayList<Batch> batchList = new ArrayList<Batch>(partner.getBatches());
+
+    batchList.sort(null);
+
+    return batchList;
   }
 
   /**
@@ -159,7 +171,7 @@ public class Warehouse implements Serializable {
    * @@return sorted list of batches
    * @@throws NoSuchProductException
    */
-  public Queue<Batch> listBatchesByProduct(String partner) throws NoSuchProductException{
+  public List<Batch> listBatchesByProduct(String partner) throws NoSuchProductException{
     return listBatchesByProduct(lookupProduct(partner));
   }
 
@@ -167,8 +179,14 @@ public class Warehouse implements Serializable {
    * @@param product product which batches are to be listed
    * @@return sorted list of batches
    */
-  public Queue<Batch> listBatchesByProduct(Product product) {
-    return product.getBatches();
+  public List<Batch> listBatchesByProduct(Product product) {
+    updateBatches();
+
+    ArrayList<Batch> batchList = new ArrayList<Batch>(product.getBatches());
+
+    batchList.sort(null);
+
+    return batchList;
   }
 
 
@@ -221,6 +239,7 @@ public class Warehouse implements Serializable {
       Partner newPartner = new Partner(id, name, address);
       _partners.add(newPartner);
       _partnerLookup.put(id, newPartner);
+      _notStation.addMailbox(newPartner.getMailbox());
       return;
     }
 
@@ -234,7 +253,7 @@ public class Warehouse implements Serializable {
    * @@param return registered product
    */
   public ProductSimple registerProductSimple(String id, float price, int stock) {
-    ProductSimple product;
+    ProductSimple product = null;
 
     try {
       product = (ProductSimple) lookupProduct(id);
@@ -277,21 +296,21 @@ public class Warehouse implements Serializable {
     return product;
   }
 
+
   /**
    * @@param price selected price
    * @@return batches under given price
    */
-
-  public Queue<Batch> listBatchesUnderGivenPrice(float price) {
-    Queue<Batch> batchQueue = new PriorityQueue<Batch>();
+  public List<Batch> listBatchesUnderGivenPrice(float price) {
+    List<Batch> batchList = new ArrayList<Batch>();
 
     for (Batch b : listAllBatches()) {
       if (b.getPrice() < price) {
-        batchQueue.add(b);
+        batchList.add(b);
       }
     }
 
-    return batchQueue;
+    return batchList;
   }
 
   /**
@@ -313,13 +332,14 @@ public class Warehouse implements Serializable {
    * @@return selected product's cheapest batch
    */
   public Batch getCheapestBatch(Product product) {
-    Queue<Batch> batchesByProduct = listBatchesByProduct(product);
+    List<Batch> batchesByProduct = listBatchesByProduct(product);
     Batch cheapestBatch = null;
     float cheapestPrice = -1;
 
     for (Batch b : batchesByProduct) {
-      if (cheapestPrice == -1 || b.getPrice() < cheapestPrice) {
+      if ((cheapestPrice == -1 || b.getPrice() < cheapestPrice) && b != null) {
         cheapestBatch = b;
+        cheapestPrice = b.getPrice();
       }
     }
 
@@ -345,6 +365,7 @@ public class Warehouse implements Serializable {
   public float consumeProducts(Product product, int quantity) { // Returns the price of all of the products summed together
     float price = 0;
     Batch currentBatch;
+    product.addStock(-quantity);
 
     while (quantity > 0) {
       currentBatch = getCheapestBatch(product);
@@ -358,6 +379,7 @@ public class Warehouse implements Serializable {
         currentBatch.addStock(-quantity);
         quantity = 0;
       }
+
     }
 
     return price;
@@ -419,7 +441,6 @@ public class Warehouse implements Serializable {
    */
 
   public Sale attemptSale(String partnerStr, String productStr, int amount, int deadline) throws NotEnoughProductsException, NoSuchPartnerException, NoSuchProductException {
-
     Partner partner = lookupPartner(partnerStr);
     Product product = lookupProduct(productStr);
     return attemptSale(partner, product, amount, deadline);
@@ -435,25 +456,28 @@ public class Warehouse implements Serializable {
    */
 
   public Sale attemptSale(Partner partner, Product product, int amount, int deadline) throws NotEnoughProductsException {
-    if (product.getStock() <= amount) { // Check if product stock is directly enough to sell
+    if (product.getStock() >= amount) { // Check if product stock is directly enough to sell
       float price = consumeProducts(product, amount);
       Sale sale = new Sale(getTotalTransactions(), partner, product, amount, price, price, deadline); // FIXME
       _transactions.add(sale);
       partner.addSale(sale);
-      product.addStock(-amount);
 
       return sale;
     } else { // If product stock isn't enough, check if difference between stock and requested amount can be crafted
       int stockNeeded = amount - product.getStock(); // Calculate difference
 
       if (product.enoughStock(amount)) { // Check if it can be crafted
-        craftProduct((ProductDerivative) product, partner, stockNeeded); // Craft the product
-        return attemptSale(partner, product, amount, deadline); // Try to sell again
+        if (product.getRecipe() != null) {
+          craftProduct((ProductDerivative) product, partner, stockNeeded); // Craft the product
+          return attemptSale(partner, product, amount, deadline); // Try to sell again
+        }
+      } else {
+        product.throwFirstMissingSimpleProduct(stockNeeded);
       }
     }
 
     // If none of the above are successful, throw exception
-    throw new NotEnoughProductsException(product.getStock());
+    throw new NotEnoughProductsException(product.getId(), amount, product.getStock());
   }
 
   /**
@@ -466,10 +490,10 @@ public class Warehouse implements Serializable {
    * @@throws NoSuchProductException
    */
 
-  public Acquisition acquire(String partnerStr, String productStr, int amount, float price) throws NoSuchPartnerException, NoSuchProductException{
+  public Acquisition acquire(String partnerStr, String productStr, int amount, float price, boolean newProduct) throws NoSuchPartnerException, NoSuchProductException{
     Partner partner = lookupPartner(partnerStr);
     Product product = lookupProduct(productStr);
-    return acquire(partner, product, amount, price);
+    return acquire(partner, product, amount, price, newProduct);
   }
 
   /**
@@ -480,9 +504,18 @@ public class Warehouse implements Serializable {
    * @@return acquisition made
    */
 
-  public Acquisition acquire(Partner partner, Product product, int amount, float price) {
+  public Acquisition acquire(Partner partner, Product product, int amount, float price, boolean newProduct) {
     _availableBalance -= amount * price;
     _contabilisticBalance -= amount * price;
+
+    // Look up the cheapest batch to check for notifications
+    Batch cheapestBatch = getCheapestBatch(product);
+
+    // If stock was 0, then emit a notification for NEW
+    if (!newProduct && product.getStock() == 0) { _notStation.emitNotification(new Notification("NEW", product, price)); }
+
+    // If new price is cheaper than old cheapest batch, then emit a notification for BARGAIN
+    if (cheapestBatch != null && cheapestBatch.getPrice() > price) { _notStation.emitNotification(new Notification("BARGAIN", product, price)); }
 
     registerNewBatch(product, partner, price, amount);
 
@@ -490,9 +523,6 @@ public class Warehouse implements Serializable {
 
     _transactions.add(acquisition);
     lookupAcquisitionsByPartner(partner).add(acquisition);
-
-    _availableBalance -= acquisition.getRealValue();
-    _contabilisticBalance -= acquisition.getRealValue();
 
     return acquisition;
   }
@@ -524,7 +554,7 @@ public class Warehouse implements Serializable {
    */
 
   public Breakdown attemptBreakdown(Partner partner, Product product, int amount) throws NotEnoughProductsException {
-    if (product.getStock() < amount) { throw new NotEnoughProductsException(); } // If not enough stock, fails
+    if (product.getStock() < amount) { throw new NotEnoughProductsException(product.getStock()); } // If not enough stock, fails
     if (product.getRecipe() == null) { return null; } // If product is simple, don't do anything
 
     Recipe recipe = product.getRecipe();
@@ -550,6 +580,7 @@ public class Warehouse implements Serializable {
     Breakdown breakdown = new Breakdown(getTotalTransactions(), partner, product, amount, price, getDate(), receipt);
     pay(breakdown);
     _contabilisticBalance += breakdown.getRealValue();
+    partner.addBreakdown(breakdown);
 
     return breakdown;
   }
@@ -570,7 +601,7 @@ public class Warehouse implements Serializable {
    */
 
   public void pay(Transaction transaction) {
-    transaction.markAsPaid();
+    transaction.markAsPaid(_date);
 
     _availableBalance += transaction.getRealValue();
   }
@@ -633,7 +664,7 @@ public class Warehouse implements Serializable {
    */      
   public void acquireNewProductSimple(String partner, String product, float price, int stock) throws NoSuchPartnerException, NoSuchProductException{
     registerProductSimple(product, price, stock);
-    acquire(partner, product, stock, price);
+    acquire(partner, product, stock, price, true);
   }
 
 
@@ -659,7 +690,7 @@ public class Warehouse implements Serializable {
       registerProductDerivative(productStr, recipe, multiplier, price, stock);
       Product product = lookupProduct(productStr);
 
-      acquire(partner, product, stock, price);
+      acquire(partner, product, stock, price, true);
   }  
 
 
@@ -694,6 +725,17 @@ public class Warehouse implements Serializable {
   }
 
 
+  
+  public void updateBatches() {
+    for (Batch b: _batches) {
+      if (b.getStock() <= 0) {
+        removeBatch(b);
+      }
+    }
+  }
+
+  // -------------------------------------------------------------------------------------------------------------------
+
   /**
    * @@param product product associated with batch
    * @@param partner partner associated with batch
@@ -703,16 +745,9 @@ public class Warehouse implements Serializable {
    */
   public void registerNewBatch (Product product, Partner partner, float price, int stock){
     Batch batch = new Batch(product, partner, price, stock);
-    Batch cheapestBatch = getCheapestBatch(product);
-
-    // If stock was 0, then emit a notification for NEW
-    if (product.getStock() == 0) { _notStation.emitNotification(new Notification("NEW", product, price)); }
-
-    // If new price is cheaper than old cheapest batch, then emit a notification for BARGAIN
-    if (cheapestBatch != null && cheapestBatch.getPrice() > price) { _notStation.emitNotification(new Notification("BARGAIN", product, price)); }
 
     product.addStock(stock);
-
+    if (product.getMaxPrice() < price) { product.setMaxPrice(price); }
     _batches.add(batch);
 
     partner.addBatch(batch);
@@ -734,6 +769,7 @@ public class Warehouse implements Serializable {
     while ((s = in.readLine()) != null) {
       String line = new String(s.getBytes(), "UTF-8");
       String[] fields = line.split("\\|");
+
       switch (fields[0]) {
         case "PARTNER" -> {
           registerNewPartner(fields[1], fields[2], fields[3]);
@@ -747,7 +783,10 @@ public class Warehouse implements Serializable {
 
           ProductSimple product = registerProductSimple(id, price, stock);
           Partner partner = lookupPartner(partnerId);
+
           registerNewBatch(product, partner, price, stock);
+
+
 
         }
         case "BATCH_M" -> {

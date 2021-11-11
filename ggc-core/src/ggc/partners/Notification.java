@@ -19,6 +19,8 @@ public class Notification implements Serializable {
         _product = product;
         _price = price;
         _type = type;
+
+
     }
 
     public String getMethod() { return _method; }
@@ -27,6 +29,6 @@ public class Notification implements Serializable {
 
     @Override
     public String toString() {
-        return _type + "|" + _product + "|" + _price;
+        return _type + "|" + _product.getId() + "|" + Math.round(_price);
     }
 }
