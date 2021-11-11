@@ -7,9 +7,45 @@ import ggc.products.Product;
 public abstract class Status implements Serializable {
 
     private static final long serialVersionUID = 202111081415L;
+    private Partner _partner;
+    private float _points;
+
+    public Status(Partner partner) {
+        _partner = partner;
+        _points = 0;
+    }
+
+    public Status(Partner partner, float points) {
+        _partner = partner;
+        _points = points;
+    }
+
+    public float getPoints() {
+        return _points;
+    }
+
+    public void setPoints(float points) {
+        _points = points;
+
+        if (_points >= 25000) { // If score >= 25000, new status is ELITE
+            _partner.setStatus(new EliteStatus(_partner, points));
+        } else if (_points >= 2000) { // If score >= 2000, new status is SELECTION
+            _partner.setStatus(new SelectionStatus(_partner, points));
+        } else { // Else, new status is NORMAL
+            _partner.setStatus(new NormalStatus(_partner, points));
+        }
+    }
+
+    public void addPoints(float points) {
+        setPoints(getPoints() + points);
+    }
+
+    public Partner getPartner() {
+        return _partner;
+    }
 
     public abstract float calculateRealValue(float baseValue, int period, int dayDifference);
 
-    public abstract float calculatePartnerPoints(Partner partner, Transaction transaction);
+    public abstract void updatePoints(Transaction transaction);
 
 }

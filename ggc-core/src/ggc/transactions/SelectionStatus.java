@@ -9,6 +9,14 @@ public class SelectionStatus extends Status implements Serializable {
     private static final long serialVersionUID = 202111081425L;
     private static final String str = "SELECTION";
 
+    public SelectionStatus(Partner partner) {
+        super(partner);
+    }
+
+    public SelectionStatus(Partner partner, float points) {
+        super(partner, points);
+    }
+
     public float calculateRealValue(float baseValue, int period, int dayDifference) {
         switch (period) {
             case (1): // Period 1
@@ -26,11 +34,17 @@ public class SelectionStatus extends Status implements Serializable {
         return (baseValue);
     }
 
-    public float calculatePartnerPoints(Partner partner, Transaction transaction) {
-        if (transaction.getPaidDate() <= transaction.getDeadline() + 2) { // 2 day tolerance
-            return (partner.getPoints() + transaction.getRealValue() * 10);
-        } else {
-            return (partner.getPoints() * 0.1f);
+    public void updatePoints(Transaction transaction) {
+        if (transaction.getRealValue() >= 0) {
+            float newPoints;
+
+            if (transaction.getPaidDate() <= transaction.getDeadline() + 2) { // 2 day tolerance
+                newPoints = (getPoints() + transaction.getRealValue() * 10);
+            } else {
+                newPoints = (getPoints() * 0.1f);
+            }
+
+            setPoints(newPoints);
         }
     }
 

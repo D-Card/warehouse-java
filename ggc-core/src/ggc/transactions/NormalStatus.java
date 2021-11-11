@@ -9,6 +9,14 @@ public class NormalStatus extends Status implements Serializable {
     private static final long serialVersionUID = 202111081418L;
     private static final String str = "NORMAL";
 
+    public NormalStatus(Partner partner) {
+        super(partner);
+    }
+
+    public NormalStatus(Partner partner, float points) {
+        super(partner, points);
+    }
+
     public float calculateRealValue(float baseValue, int period, int dayDifference) {
         switch (period) {
             case (1): // Period 1
@@ -24,11 +32,17 @@ public class NormalStatus extends Status implements Serializable {
         return (baseValue);
     }
 
-    public float calculatePartnerPoints(Partner partner, Transaction transaction) {
-        if (transaction.getPaidDate() <= transaction.getDeadline()) {
-            return (partner.getPoints() + transaction.getRealValue() * 10);
-        } else {
-            return 0;
+    public void updatePoints(Transaction transaction) {
+        if (transaction.getRealValue() >= 0) {
+            float newPoints;
+
+            if (transaction.getPaidDate() <= transaction.getDeadline()) {
+                newPoints = (getPoints() + transaction.getRealValue() * 10);
+            } else {
+                newPoints = 0;
+            }
+
+            setPoints(newPoints);
         }
     }
 

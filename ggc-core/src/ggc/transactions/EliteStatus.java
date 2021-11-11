@@ -9,6 +9,14 @@ public class EliteStatus extends Status implements Serializable {
     private static final long serialVersionUID = 202111081421L;
     private static final String str = "ELITE";
 
+    public EliteStatus(Partner partner) {
+        super(partner);
+    }
+
+    public EliteStatus(Partner partner, float points) {
+        super(partner, points);
+    }
+
     public float calculateRealValue(float baseValue, int period, int dayDifference) {
         switch (period) {
             case (1): // Period 1
@@ -24,11 +32,17 @@ public class EliteStatus extends Status implements Serializable {
         return (baseValue);
     }
 
-    public float calculatePartnerPoints(Partner partner, Transaction transaction) {
-        if (transaction.getPaidDate() <= transaction.getDeadline() + 15) { // 15 day tolerance
-            return (partner.getPoints() + transaction.getRealValue() * 10);
-        } else {
-            return (partner.getPoints() * 0.25f);
+    public void updatePoints(Transaction transaction) {
+        if (transaction.getRealValue() >= 0) {
+            float newPoints;
+
+            if (transaction.getPaidDate() <= transaction.getDeadline() + 15) { // 15 day tolerance
+                newPoints = (getPoints() + transaction.getRealValue() * 10);
+            } else {
+                newPoints = (getPoints() * 0.25f);
+            }
+
+            setPoints(newPoints);
         }
     }
 

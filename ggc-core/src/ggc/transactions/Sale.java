@@ -88,11 +88,7 @@ public class Sale extends Transaction implements Serializable {
         _paid = true;
 
         updateRealValue(date);
-
-        Partner partner = getPartner();
-        Status status = partner.getStatus();
-
-        partner.setPoints(status.calculatePartnerPoints(partner, this));
+        getPartner().getStatus().updatePoints(this);
     }
 
     @Override

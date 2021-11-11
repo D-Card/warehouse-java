@@ -15,8 +15,7 @@ public class Partner implements Serializable, Comparable<Partner>{
     private String _name;
     private String _id;
     private String _address;
-    private Status _status = new NormalStatus();
-    private float _points = 0;
+    private Status _status = new NormalStatus(this);
     private Mailbox _mailbox = new Mailbox();
     private PriorityQueue<Batch> _batches = new PriorityQueue<Batch>();
 
@@ -48,7 +47,7 @@ public class Partner implements Serializable, Comparable<Partner>{
     }
 
     public float getPoints() {
-        return _points;
+        return _status.getPoints();
     }
 
     public Mailbox getMailbox() {
@@ -100,13 +99,6 @@ public class Partner implements Serializable, Comparable<Partner>{
         _status = status;
     }
 
-    public void setPoints(float points) {
-        _points = points;
-
-        if (_points >= 25000) { setStatus(new EliteStatus()); }
-        else if (_points >= 2000) { setStatus(new SelectionStatus()); }
-        else setStatus(new NormalStatus());
-    }
 
     public void setMailbox(Mailbox mailbox) {
         _mailbox = mailbox;
@@ -116,9 +108,14 @@ public class Partner implements Serializable, Comparable<Partner>{
 
     public void removeBatch(Batch batch) { _batches.remove(batch); }
 
-    public void addSale(Transaction sale) { _sales.add(sale); }
+    public void addSale(Transaction sale) {
+        _sales.add(sale);
+    }
 
-    public void addBreakdown(Transaction breakdown) { _breakdowns.add(breakdown); }
+    public void addBreakdown(Transaction breakdown) {
+        _breakdowns.add(breakdown);
+        _status.updatePoints(breakdown);
+    }
 
     public float getTotalSellValue() {
         float value = 0;
@@ -154,7 +151,7 @@ public class Partner implements Serializable, Comparable<Partner>{
 
     @Override
     public String toString() {
-        return _id + "|" + _name + "|" + _address + "|" + _status + "|" + Math.round(_points) + "|" + Math.round(getTotalBuyValue()) + "|" + Math.round(getTotalSellValue()) + "|" + Math.round(getTotalPaidValue());
+        return _id + "|" + _name + "|" + _address + "|" + _status + "|" + Math.round(getPoints()) + "|" + Math.round(getTotalBuyValue()) + "|" + Math.round(getTotalSellValue()) + "|" + Math.round(getTotalPaidValue());
     }
 
     @Override
