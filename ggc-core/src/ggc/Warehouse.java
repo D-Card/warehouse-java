@@ -134,6 +134,8 @@ public class Warehouse implements Serializable {
    * @@return sorted list of all batches
    */
   public ArrayList<Batch> listAllBatches() {
+    updateBatches();
+
     ArrayList<Batch> batchList = new ArrayList<Batch>(_batches);
 
     batchList.sort(null);
@@ -146,7 +148,7 @@ public class Warehouse implements Serializable {
    * @@return sorted list of partner's batches
    * @@throws NoSuchPartnerException
    */
-  public Queue<Batch> listBatchesByPartner(String partner) throws NoSuchPartnerException {
+  public List<Batch> listBatchesByPartner(String partner) throws NoSuchPartnerException {
     return listBatchesByPartner(lookupPartner(partner));
   }
 
@@ -154,8 +156,14 @@ public class Warehouse implements Serializable {
    * @@param partner partner whose batches are to be listed
    * @@return sorted list of partner's batches
    */
-  public Queue<Batch> listBatchesByPartner(Partner partner) {
-    return partner.getBatches();
+  public List<Batch> listBatchesByPartner(Partner partner) {
+    updateBatches();
+
+    ArrayList<Batch> batchList = new ArrayList<Batch>(partner.getBatches());
+
+    batchList.sort(null);
+
+    return batchList;
   }
 
   /**
@@ -163,7 +171,7 @@ public class Warehouse implements Serializable {
    * @@return sorted list of batches
    * @@throws NoSuchProductException
    */
-  public Queue<Batch> listBatchesByProduct(String partner) throws NoSuchProductException{
+  public List<Batch> listBatchesByProduct(String partner) throws NoSuchProductException{
     return listBatchesByProduct(lookupProduct(partner));
   }
 
@@ -171,8 +179,14 @@ public class Warehouse implements Serializable {
    * @@param product product which batches are to be listed
    * @@return sorted list of batches
    */
-  public Queue<Batch> listBatchesByProduct(Product product) {
-    return product.getBatches();
+  public List<Batch> listBatchesByProduct(Product product) {
+    updateBatches();
+
+    ArrayList<Batch> batchList = new ArrayList<Batch>(product.getBatches());
+
+    batchList.sort(null);
+
+    return batchList;
   }
 
 
@@ -288,16 +302,16 @@ public class Warehouse implements Serializable {
    * @@return partner
    * @@throws NoSuchProductException
    */
-  public Queue<Batch> listBatchesUnderGivenPrice(float price) {
-    Queue<Batch> batchQueue = new PriorityQueue<Batch>();
+  public List<Batch> listBatchesUnderGivenPrice(float price) {
+    List<Batch> batchList = new ArrayList<Batch>();
 
     for (Batch b : listAllBatches()) {
       if (b.getPrice() < price) {
-        batchQueue.add(b);
+        batchList.add(b);
       }
     }
 
-    return batchQueue;
+    return batchList;
   }
 
   /**
@@ -316,7 +330,7 @@ public class Warehouse implements Serializable {
 
 
   public Batch getCheapestBatch(Product product) {
-    Queue<Batch> batchesByProduct = listBatchesByProduct(product);
+    List<Batch> batchesByProduct = listBatchesByProduct(product);
     Batch cheapestBatch = null;
     float cheapestPrice = -1;
 
@@ -418,13 +432,13 @@ public class Warehouse implements Serializable {
     throw new NotEnoughProductsException(product.getStock());
   }
 
-  public Acquisition acquire(String partnerStr, String productStr, int amount, float price) throws NoSuchPartnerException, NoSuchProductException{
+  public Acquisition acquire(String partnerStr, String productStr, int amount, float price, boolean newProduct) throws NoSuchPartnerException, NoSuchProductException{
     Partner partner = lookupPartner(partnerStr);
     Product product = lookupProduct(productStr);
-    return acquire(partner, product, amount, price);
+    return acquire(partner, product, amount, price, newProduct);
   }
 
-  public Acquisition acquire(Partner partner, Product product, int amount, float price) {
+  public Acquisition acquire(Partner partner, Product product, int amount, float price, boolean newProduct) {
     _availableBalance -= amount * price;
     _contabilisticBalance -= amount * price;
 
@@ -432,10 +446,9 @@ public class Warehouse implements Serializable {
     Batch cheapestBatch = getCheapestBatch(product);
 
     // If stock was 0, then emit a notification for NEW
-    if (product.getStock() == 0) { _notStation.emitNotification(new Notification("NEW", product, price)); }
+    if (!newProduct && product.getStock() == 0) { _notStation.emitNotification(new Notification("NEW", product, price)); }
 
     // If new price is cheaper than old cheapest batch, then emit a notification for BARGAIN
-
     if (cheapestBatch != null && cheapestBatch.getPrice() > price) { _notStation.emitNotification(new Notification("BARGAIN", product, price)); }
 
     registerNewBatch(product, partner, price, amount);
@@ -530,7 +543,7 @@ public class Warehouse implements Serializable {
       
   public void acquireNewProductSimple(String partner, String product, float price, int stock) throws NoSuchPartnerException, NoSuchProductException{
     registerProductSimple(product, price, stock);
-    acquire(partner, product, stock, price);
+    acquire(partner, product, stock, price, true);
   }
 
 
@@ -545,7 +558,7 @@ public class Warehouse implements Serializable {
       registerProductDerivative(productStr, recipe, multiplier, price, stock);
       Product product = lookupProduct(productStr);
 
-      acquire(partner, product, stock, price);
+      acquire(partner, product, stock, price, true);
   }  
 
   public ArrayList<Transaction> lookupAcquisitionsByPartner(String partner) throws NoSuchPartnerException{
@@ -562,6 +575,14 @@ public class Warehouse implements Serializable {
     if (id >= _transactions.size() || id < 0) { throw new NoSuchTransactionException(id); }
 
     return _transactions.get(id);
+  }
+
+  public void updateBatches() {
+    for (Batch b: _batches) {
+      if (b.getStock() <= 0) {
+        removeBatch(b);
+      }
+    }
   }
 
   // -------------------------------------------------------------------------------------------------------------------

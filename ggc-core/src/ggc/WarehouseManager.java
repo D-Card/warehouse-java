@@ -49,11 +49,11 @@ public class WarehouseManager {
     return _warehouse.listAllBatches();
   }
 
-  public Queue<Batch> requestListBatchesByProduct(String product) throws NoSuchProductException {
+  public List<Batch> requestListBatchesByProduct(String product) throws NoSuchProductException {
     return _warehouse.listBatchesByProduct(product);
   }
 
-  public Queue<Batch> requestListBatchesByPartner(String partner) throws NoSuchPartnerException {
+  public List<Batch> requestListBatchesByPartner(String partner) throws NoSuchPartnerException {
     return _warehouse.listBatchesByPartner(partner);
   }
 
@@ -82,7 +82,7 @@ public class WarehouseManager {
     return _warehouse.listPartnerNotificationsByMethod(partner, method);
   }
 
-  public Queue<Batch> requestListBatchesUnderGivenPrice(float price) {
+  public List<Batch> requestListBatchesUnderGivenPrice(float price) {
     return _warehouse.listBatchesUnderGivenPrice(price);
   }
 
@@ -123,7 +123,7 @@ public class WarehouseManager {
   }
 
   public void requestAcquire(String partner, String product, float price, int amount) throws NotEnoughProductsException, NoSuchPartnerException, NoSuchProductException {
-    _warehouse.acquire(partner, product, amount, price);
+    _warehouse.acquire(partner, product, amount, price, false);
     _updated = true;
   }
 
