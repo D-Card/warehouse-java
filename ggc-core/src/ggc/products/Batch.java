@@ -69,9 +69,11 @@ public class Batch implements Serializable, Comparable<Batch>{
     public int compareTo(Batch batch) {
         Collator collator = Collator.getInstance(Locale.getDefault());
 
-        if (_product == null) { return 0; }
 
+        if (_product == null || batch.getProduct() == null) { return 0; }
         int signProduct = collator.compare(_product.getId(), batch.getProduct().getId());
+
+        if (_partner == null || batch.getPartner() == null) { return 0; }
         int signPartner = collator.compare(_partner.getId(), batch.getPartner().getId());
 
         if (signProduct != 0) return signProduct;
