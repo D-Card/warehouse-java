@@ -6,7 +6,7 @@ import ggc.exceptions.*;
 
 public class Receipt implements Serializable{
 
-    private static final long serialVersionUID = 202110262344L;
+    private static final long serialVersionUID = 202110282344L;
 
     private Map<Product, Float> _productPrices = new HashMap<Product, Float>();
     private Recipe _recipe;
