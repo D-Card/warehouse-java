@@ -308,7 +308,10 @@ public class Warehouse implements Serializable {
   }
 
 
-
+  /**
+   * @@param product selected product
+   * @@return selected product's cheapest batch
+   */
   public Batch getCheapestBatch(Product product) {
     Queue<Batch> batchesByProduct = listBatchesByProduct(product);
     Batch cheapestBatch = null;
@@ -323,12 +326,22 @@ public class Warehouse implements Serializable {
     return cheapestBatch;
   }
 
+  /**
+   * @@param batch batch to be removed
+   */
+
   public void removeBatch(Batch batch) {
     _batches.remove(batch);
     batch.getPartner().removeBatch(batch);
     batch.getProduct().removeBatch(batch);
   }
 
+
+  /**
+   * @@param product product to be consumed
+   * @@param quantity product's quantity to be consumed
+   * @@return price of all consumed products
+   */
   public float consumeProducts(Product product, int quantity) { // Returns the price of all of the products summed together
     float price = 0;
     Batch currentBatch;
@@ -350,6 +363,13 @@ public class Warehouse implements Serializable {
     return price;
   }
 
+  /**
+   * @@param product product to be looked up
+   * @@param partner selected partner
+   * @@param price selected price
+   * @@return similar batch, if it exists, else return null 
+   */
+
   public Batch lookupSimilarBatch(Product product, Partner partner, float price) {
     for (Batch b : listBatchesByProduct(product)) {
       if (b.getProduct() == product && b.getPartner() == partner && b.getPrice() == price) {
@@ -359,6 +379,12 @@ public class Warehouse implements Serializable {
 
     return null;
   }
+
+  /**
+   * @@param product product to be crafted
+   * @@param partner partner associated with product
+   * @@param quantity quantity to be crafted
+   */
 
   public void craftProduct(ProductDerivative product, Partner partner, int quantity) {
     Recipe recipe = product.getRecipe();
@@ -381,6 +407,17 @@ public class Warehouse implements Serializable {
     }
   }
 
+  /**
+   * @@param partnerStr   partner's id
+   * @@param productStr product's id
+   * @@param amount product's amount to be sold
+   * @@param deadline payment deadline
+   * @@return sale made
+   * @@throws NotEnoughProductsException
+   * @@throws NoSuchPartnerException
+   * @@throws NoSuchProductException
+   */
+
   public Sale attemptSale(String partnerStr, String productStr, int amount, int deadline) throws NotEnoughProductsException, NoSuchPartnerException, NoSuchProductException {
 
     Partner partner = lookupPartner(partnerStr);
@@ -388,6 +425,14 @@ public class Warehouse implements Serializable {
     return attemptSale(partner, product, amount, deadline);
   }
    
+  /**
+   * @@param partner partner associated with sale
+   * @@param product product being sold
+   * @@param amount product's amount to be sold
+   * @@param deadline payment deadline
+   * @@return sale made
+   * @@throws NotEnoughProductsException
+   */
 
   public Sale attemptSale(Partner partner, Product product, int amount, int deadline) throws NotEnoughProductsException {
     if (product.getStock() <= amount) { // Check if product stock is directly enough to sell
@@ -411,11 +456,29 @@ public class Warehouse implements Serializable {
     throw new NotEnoughProductsException(product.getStock());
   }
 
+  /**
+   * @@param partnerStr partner's id
+   * @@param productStr product's id
+   * @@param amount product's amount to be acquired
+   * @@param price product's price
+   * @@return acquisition made
+   * @@throws NoSuchPartnerException
+   * @@throws NoSuchProductException
+   */
+
   public Acquisition acquire(String partnerStr, String productStr, int amount, float price) throws NoSuchPartnerException, NoSuchProductException{
     Partner partner = lookupPartner(partnerStr);
     Product product = lookupProduct(productStr);
     return acquire(partner, product, amount, price);
   }
+
+  /**
+   * @@param partner partner associated with acquisition
+   * @@param product product being acquired
+   * @@param amount product's amount to be acquired
+   * @@param price product's price
+   * @@return acquisition made
+   */
 
   public Acquisition acquire(Partner partner, Product product, int amount, float price) {
     _availableBalance -= amount * price;
@@ -435,12 +498,30 @@ public class Warehouse implements Serializable {
   }
 
 
+  /**
+   * @@param partnerStr partner's id
+   * @@param productStr product's id
+   * @@param amount product's amount to be broken down
+   * @@return breakdown made
+   * @@throws NotEnoughProductsException
+   * @@throws NoSuchPartnerException
+   * @@throws NoSuchProductException
+   */
+
   public Breakdown attemptBreakdown(String partnerStr, String productStr, int amount) throws NotEnoughProductsException, NoSuchPartnerException, NoSuchProductException {
     Partner partner = lookupPartner(partnerStr);
     Product product = lookupProduct(productStr);
     return attemptBreakdown(partner, product, amount);
   }
 
+
+  /**
+   * @@param partner partner associated with breakdown
+   * @@param product product being broken down
+   * @@param amount product's amount 
+   * @@return breakdown made
+   * @@throws NotEnoughProductsException
+   */
 
   public Breakdown attemptBreakdown(Partner partner, Product product, int amount) throws NotEnoughProductsException {
     if (product.getStock() < amount) { throw new NotEnoughProductsException(); } // If not enough stock, fails
@@ -473,10 +554,20 @@ public class Warehouse implements Serializable {
     return breakdown;
   }
 
+  /**
+   * @@param id transaction id
+   * @@throws NoSuchTransactionException
+   */
+
   public void pay(int id) throws NoSuchTransactionException{
     Transaction transaction = lookupTransaction(id);
     pay(transaction);
   }
+
+  /**
+   * @@param id transaction to be paid
+   * @@throws NoSuchTransactionException
+   */
 
   public void pay(Transaction transaction) {
     transaction.markAsPaid();
@@ -484,10 +575,19 @@ public class Warehouse implements Serializable {
     _availableBalance += transaction.getRealValue();
   }
 
+  /**
+   * @@param partner id of the partner to be searched
+   * @@return list of selected partner paid sales
+   * @@throws NoSuchPartnerException
+   */
   public ArrayList<Transaction> lookupPaidSalesByPartner(String partner) throws NoSuchPartnerException {
     return lookupPaidSalesByPartner(lookupPartner(partner));
   }
 
+  /**
+   * @@param partner partner to be searched
+   * @@return list of selected partner paid sales
+   */
   public ArrayList<Transaction> lookupPaidSalesByPartner(Partner partner) {
     ArrayList<Transaction> paidSales = new ArrayList<Transaction>();
 
@@ -498,10 +598,21 @@ public class Warehouse implements Serializable {
     return paidSales;
   }
 
+
+  /**
+   * @@param partner id of the partner to be searched
+   * @@return list of selected partner sales
+   * @@throws NoSuchPartnerException
+   */
   public ArrayList<Transaction> lookupSalesByPartner(String partner) throws NoSuchPartnerException{
     return lookupSalesByPartner(lookupPartner(partner));
   }
 
+
+  /**
+   * @@param partner partner to be searched
+   * @@return list of selected partner sales
+   */
   public ArrayList<Transaction> lookupSalesByPartner(Partner partner) {
     for (Transaction t: partner.getSales()) {
       t.updateRealValue(_date);
@@ -511,12 +622,32 @@ public class Warehouse implements Serializable {
   }
 
       
+
+  /**
+   * @@param partner partner associated with acquisition
+   * @@param product product being acquired
+   * @@param price product's price 
+   * @@param stock product's stock
+   * @@throws NoSuchPartnerException
+   * @@throws NoSuchProductsException
+   */      
   public void acquireNewProductSimple(String partner, String product, float price, int stock) throws NoSuchPartnerException, NoSuchProductException{
     registerProductSimple(product, price, stock);
     acquire(partner, product, stock, price);
   }
 
 
+  /**
+   * @@param partnerStr id of partner associated with acquisition
+   * @@param productStr id of product being acquired
+   * @@param price product's price 
+   * @@param stock product's stock
+   * @@param products list of products which make up derivative product
+   * @@param productQuantities list of quantities for recipe
+   * @@param multiplier derivative product price multiplier
+   * @@throws NoSuchPartnerException
+   * @@throws NoSuchProductsException
+   */      
   public void acquireNewProductDerivative(String partnerStr, String productStr, float price, int stock, ArrayList<String> products, ArrayList<Integer> productQuantities, float multiplier) throws NoSuchPartnerException, NoSuchProductException {
       Partner partner = lookupPartner(partnerStr);
       Recipe recipe = new Recipe();
@@ -531,23 +662,37 @@ public class Warehouse implements Serializable {
       acquire(partner, product, stock, price);
   }  
 
+
+
+  /**
+   * @@param partner id of selected partner
+   * @@return acquisitions by partner 
+   * @@throws NoSuchPartnerException
+   */      
   public ArrayList<Transaction> lookupAcquisitionsByPartner(String partner) throws NoSuchPartnerException{
     return lookupAcquisitionsByPartner(lookupPartner(partner));
   }
 
-
+  /**
+   * @@param partner selected partner
+   * @@return acquisitions by partner 
+   */  
   public ArrayList<Transaction> lookupAcquisitionsByPartner(Partner partner) {
     return partner.getAcquisitions();
 
   }
 
+  /**
+   * @@param id transaction id
+   * @@return selected transaction 
+   * @@throws NoSuchTransactionException
+   */  
   public Transaction lookupTransaction(int id) throws NoSuchTransactionException {
     if (id >= _transactions.size() || id < 0) { throw new NoSuchTransactionException(id); }
 
     return _transactions.get(id);
   }
 
-  // -------------------------------------------------------------------------------------------------------------------
 
   /**
    * @@param product product associated with batch
