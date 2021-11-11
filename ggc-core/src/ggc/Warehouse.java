@@ -106,6 +106,11 @@ public class Warehouse implements Serializable {
     return _partnerLookup.get(id);
   }
 
+  /**
+   * @@param id partner's id
+   * @@return partner and its notifications
+   * @@throws NoSuchPartnerException
+   */
   public ArrayList<String> lookupSpecificPartner(String id) throws NoSuchPartnerException {
     ArrayList<String> stringList = new ArrayList<String>();
     Partner partner = lookupPartner(id);
@@ -135,6 +140,7 @@ public class Warehouse implements Serializable {
   /**
    * @@param id id of the partner whose batches are to be listed
    * @@return sorted list of partner's batches
+   * @@throws NoSuchPartnerException
    */
   public Queue<Batch> listBatchesByPartner(String partner) throws NoSuchPartnerException {
     return listBatchesByPartner(lookupPartner(partner));
@@ -151,6 +157,7 @@ public class Warehouse implements Serializable {
   /**
    * @@param id id of the product which batches are to be listed
    * @@return sorted list of batches
+   * @@throws NoSuchProductException
    */
   public Queue<Batch> listBatchesByProduct(String partner) throws NoSuchProductException{
     return listBatchesByProduct(lookupProduct(partner));
@@ -166,24 +173,36 @@ public class Warehouse implements Serializable {
 
 
     /**
-   * @@param id id of the partner whose notifications are to be listed
+   * @@param id partner's id whose notifications are to be listed
    * @@return list of all selected partner's notifications
+   * @@throws NoSuchPartnerException
    */
   public List<Notification> listPartnerNotifications(String id) throws NoSuchPartnerException{
     return lookupPartner(id).listAllNotifications();
   }
 
-
+    /**
+   * @@param id partner's id whose notifications are to be listed
+   * @@param method method to filter search
+   * @@return list of specific method selected partner's notifications
+   * @@throws NoSuchProductException
+   */
   public List<Notification> listPartnerNotificationsByMethod(String id, String method) throws NoSuchPartnerException{
     return listPartnerNotificationsByMethod(lookupPartner(id), method);
   }
 
+    /**
+   * @@param partner partner whose notifications are to be listed
+   * @@param method method to filter search
+   * @@return list of specific method selected partner's notifications
+   * @@throws NoSuchProductException
+   */
   public List<Notification> listPartnerNotificationsByMethod(Partner partner, String method) throws NoSuchPartnerException{
     return partner.listAllNotificationsByMethod(method);
   }
 
   /**
-   * @@return sorted list of all partners
+   * @@return list of all partners
    */
   public Set<Partner> listAllPartners() {
     return _partners;
@@ -258,6 +277,12 @@ public class Warehouse implements Serializable {
     return product;
   }
 
+  /**
+   * @@param id partner's id
+   * @@return partner
+   * @@throws NoSuchProductException
+   */
+
   public Queue<Batch> listBatchesUnderGivenPrice(float price) {
     Queue<Batch> batchQueue = new PriorityQueue<Batch>();
 
@@ -270,13 +295,20 @@ public class Warehouse implements Serializable {
     return batchQueue;
   }
 
+  /**
+   * @@param partnerStr   partner's id
+   * @@param productStr product's id
+   * @@throws NoSuchPartnerException
+   * @@throws NoSuchProductException 
+   */
+
   public void toggleProductNotifications(String partnerStr, String productStr) throws NoSuchPartnerException, NoSuchProductException {
     Partner partner = lookupPartner(partnerStr);
     Product product = lookupProduct(productStr);
     partner.getMailbox().toggleBlockedProduct(product);
   }
 
-  // Transactions ------------------------------------------------------------------------------------------------------
+
 
   public Batch getCheapestBatch(Product product) {
     Queue<Batch> batchesByProduct = listBatchesByProduct(product);
