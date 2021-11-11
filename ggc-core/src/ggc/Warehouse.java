@@ -17,8 +17,6 @@ public class Warehouse implements Serializable {
 
   /** Warehouse's current available balance */
   private double _availableBalance = 0;
-  /** Warehouse's current contabilistic balance */
-  private double _contabilisticBalance = 0;
   /** Warehouse's current date */
   private int _date = 0;
   /** Set of all the products the warehouse knows */
@@ -56,16 +54,16 @@ public class Warehouse implements Serializable {
    * @@return warehouse's contabilistic balance
    */
   public double getContabilisticBalance() {
-    _contabilisticBalance = _availableBalance;
+    double contabilisticBalance = _availableBalance;
 
     for (Transaction t: _transactions) {
       if (!t.paid()) {
         t.updateRealValue(_date);
-        _contabilisticBalance += t.getRealValue();
+        contabilisticBalance += t.getRealValue();
       }
     }
 
-    return _contabilisticBalance;
+    return contabilisticBalance;
   }
 
   public int getTotalTransactions() {
@@ -252,6 +250,7 @@ public class Warehouse implements Serializable {
    * @@param stock product's stock
    * @@param return registered product
    */
+
   public ProductSimple registerProductSimple(String id, float price, int stock) {
     ProductSimple product = null;
 
@@ -295,7 +294,6 @@ public class Warehouse implements Serializable {
 
     return product;
   }
-
 
   /**
    * @@param price selected price
@@ -506,7 +504,6 @@ public class Warehouse implements Serializable {
 
   public Acquisition acquire(Partner partner, Product product, int amount, float price, boolean newProduct) {
     _availableBalance -= amount * price;
-    _contabilisticBalance -= amount * price;
 
     // Look up the cheapest batch to check for notifications
     Batch cheapestBatch = getCheapestBatch(product);
@@ -579,7 +576,6 @@ public class Warehouse implements Serializable {
 
     Breakdown breakdown = new Breakdown(getTotalTransactions(), partner, product, amount, price, getDate(), receipt);
     pay(breakdown);
-    _contabilisticBalance += breakdown.getRealValue();
     partner.addBreakdown(breakdown);
 
     return breakdown;
