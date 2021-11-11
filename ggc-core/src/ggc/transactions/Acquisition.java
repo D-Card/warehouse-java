@@ -26,6 +26,10 @@ public class Acquisition extends Transaction implements Serializable {
         return _realValue;
     }
 
+    public float getBaseValue() {
+        return _realValue;
+    }
+
     public int getPaidDate() {
         return _paidDate;
     }
@@ -37,7 +41,6 @@ public class Acquisition extends Transaction implements Serializable {
     public void setPaidDate(int paidDate) {
         _paidDate = paidDate;
     }
-
 
     @Override
     public String toString() {

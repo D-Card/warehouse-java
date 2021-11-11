@@ -133,8 +133,12 @@ public class Warehouse implements Serializable {
   /**
    * @@return sorted list of all batches
    */
-  public Queue<Batch> listAllBatches() {
-    return _batches;
+  public ArrayList<Batch> listAllBatches() {
+    ArrayList<Batch> batchList = new ArrayList<Batch>(_batches);
+
+    batchList.sort(null);
+
+    return batchList;
   }
 
   /**
@@ -277,12 +281,12 @@ public class Warehouse implements Serializable {
     return product;
   }
 
+
   /**
    * @@param id partner's id
    * @@return partner
    * @@throws NoSuchProductException
    */
-
   public Queue<Batch> listBatchesUnderGivenPrice(float price) {
     Queue<Batch> batchQueue = new PriorityQueue<Batch>();
 

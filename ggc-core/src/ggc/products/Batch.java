@@ -71,10 +71,17 @@ public class Batch implements Serializable, Comparable<Batch>{
         int signProduct = collator.compare(_product.getId(), batch.getProduct().getId());
         int signPartner = collator.compare(_partner.getId(), batch.getPartner().getId());
 
+
         if (signProduct != 0) return signProduct;
         if (signPartner != 0) return signPartner;
-        if (_price != batch.getPrice()) return Math.round(Math.signum((_price - batch.getPrice())));
-        if (_stock != batch.getStock()) return Math.round(Math.signum((_stock - batch.getStock())));
+
+        if (_price != batch.getPrice()) {
+            return -Math.round(batch.getPrice() - _price);
+        }
+
+        if (_stock != batch.getStock()) {
+            return -Math.round(batch.getStock() - _stock);
+        }
 
         return 0;
     }

@@ -114,11 +114,31 @@ public class Partner implements Serializable, Comparable<Partner>{
 
     public void addSale(Transaction sale) { _sales.add(sale); }
 
+    public float getTotalSellValue() {
+        float value = 0;
+
+        for (Transaction t: _sales) {
+            value += t.getRealValue() * t.getAmount();
+        }
+
+        return value;
+    }
+
     public void addAcquisition(Transaction acquisition) { _acquisitions.add(acquisition); }
+
+    public float getTotalBuyValue() {
+        float value = 0;
+
+        for (Transaction t: _acquisitions) {
+            value += t.getRealValue() * t.getAmount();
+        }
+
+        return value;
+    }
 
     @Override
     public String toString() {
-        return _id + "|" + _name + "|" + _address + "|" + _status + "|" + Math.round(_points) + "|" + Math.round(_buyTotalValue) + "|" + Math.round(_sellTotalValue) + "|" + Math.round(_sellPaidValue);
+        return _id + "|" + _name + "|" + _address + "|" + _status + "|" + Math.round(_points) + "|" + Math.round(getTotalBuyValue()) + "|" + Math.round(getTotalSellValue()) + "|" + Math.round(_sellPaidValue);
     }
 
     @Override

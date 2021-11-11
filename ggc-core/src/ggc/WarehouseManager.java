@@ -45,7 +45,7 @@ public class WarehouseManager {
     return _warehouse.listAllProducts();
   }
 
-  public Queue<Batch> requestListAllBatches() {
+  public ArrayList<Batch> requestListAllBatches() {
     return _warehouse.listAllBatches();
   }
 
