@@ -5,16 +5,16 @@ import ggc.partners.Partner;
 import ggc.products.Product;
 import ggc.transactions.Transaction;
 
-public class NormalStatus extends Status implements Serializable {
+public class StatusElite extends Status implements Serializable {
 
-    private static final long serialVersionUID = 202111081418L;
-    private static final String str = "NORMAL";
+    private static final long serialVersionUID = 202111081421L;
+    private static final String str = "ELITE";
 
-    public NormalStatus(Partner partner) {
+    public StatusElite(Partner partner) {
         super(partner);
     }
 
-    public NormalStatus(Partner partner, float points) {
+    public StatusElite(Partner partner, float points) {
         super(partner, points);
     }
 
@@ -23,11 +23,11 @@ public class NormalStatus extends Status implements Serializable {
             case (1): // Period 1
                 return (baseValue * 0.9f);
             case (2): // Period 2
-                return (baseValue);
+                return (baseValue * 0.9f);
             case (3): // Period 3
-                return (baseValue * (1 + dayDifference * 0.05f));
+                return (baseValue * 0.95f);
             case (4): // Period 4
-                return (baseValue * (1 + dayDifference * 0.1f));
+                return (baseValue);
         }
 
         return (baseValue);
@@ -37,10 +37,10 @@ public class NormalStatus extends Status implements Serializable {
         if (transaction.getRealValue() >= 0) {
             float newPoints;
 
-            if (transaction.getPaidDate() <= transaction.getDeadline()) {
+            if (transaction.getPaidDate() <= transaction.getDeadline() + 15) { // 15 day tolerance
                 newPoints = (getPoints() + transaction.getRealValue() * 10);
             } else {
-                newPoints = 0;
+                newPoints = (getPoints() * 0.25f);
             }
 
             setPoints(newPoints);

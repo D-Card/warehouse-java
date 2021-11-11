@@ -5,16 +5,16 @@ import ggc.partners.Partner;
 import ggc.products.Product;
 import ggc.transactions.Transaction;
 
-public class SelectionStatus extends Status implements Serializable {
+public class StatusNormal extends Status implements Serializable {
 
-    private static final long serialVersionUID = 202111081425L;
-    private static final String str = "SELECTION";
+    private static final long serialVersionUID = 202111081418L;
+    private static final String str = "NORMAL";
 
-    public SelectionStatus(Partner partner) {
+    public StatusNormal(Partner partner) {
         super(partner);
     }
 
-    public SelectionStatus(Partner partner, float points) {
+    public StatusNormal(Partner partner, float points) {
         super(partner, points);
     }
 
@@ -23,13 +23,11 @@ public class SelectionStatus extends Status implements Serializable {
             case (1): // Period 1
                 return (baseValue * 0.9f);
             case (2): // Period 2
-                if (dayDifference >= 2) { return (baseValue * 0.95f); }
-                else { return (baseValue); }
+                return (baseValue);
             case (3): // Period 3
-                if (dayDifference > 1) { return (baseValue * (1 + dayDifference * 0.02f)); }
-                else { return (baseValue); }
-            case (4): // Period 4
                 return (baseValue * (1 + dayDifference * 0.05f));
+            case (4): // Period 4
+                return (baseValue * (1 + dayDifference * 0.1f));
         }
 
         return (baseValue);
@@ -39,10 +37,10 @@ public class SelectionStatus extends Status implements Serializable {
         if (transaction.getRealValue() >= 0) {
             float newPoints;
 
-            if (transaction.getPaidDate() <= transaction.getDeadline() + 2) { // 2 day tolerance
+            if (transaction.getPaidDate() <= transaction.getDeadline()) {
                 newPoints = (getPoints() + transaction.getRealValue() * 10);
             } else {
-                newPoints = (getPoints() * 0.1f);
+                newPoints = 0;
             }
 
             setPoints(newPoints);

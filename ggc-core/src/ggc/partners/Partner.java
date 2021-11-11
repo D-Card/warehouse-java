@@ -15,7 +15,7 @@ public class Partner implements Serializable, Comparable<Partner>{
     private String _name;
     private String _id;
     private String _address;
-    private Status _status = new NormalStatus(this);
+    private Status _status = new StatusNormal(this);
     private Mailbox _mailbox = new Mailbox();
     private PriorityQueue<Batch> _batches = new PriorityQueue<Batch>();
 
