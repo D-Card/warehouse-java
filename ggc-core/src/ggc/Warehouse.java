@@ -109,7 +109,7 @@ public class Warehouse implements Serializable {
    * @@return partner and its notifications
    * @@throws NoSuchPartnerException
    */
-  public ArrayList<String> lookupSpecificPartner(String id) throws NoSuchPartnerException {
+  public ArrayList<String> lookupPartnerPlusNotifications(String id) throws NoSuchPartnerException {
     ArrayList<String> stringList = new ArrayList<String>();
     Partner partner = lookupPartner(id);
 

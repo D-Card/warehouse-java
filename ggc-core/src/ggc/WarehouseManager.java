@@ -70,12 +70,8 @@ public class WarehouseManager {
     return _warehouse.lookupPartner(partner);
   }
 
-  public List<Notification> requestListPartnerNotifications(String partner) throws NoSuchPartnerException {
-    return _warehouse.listPartnerNotifications(partner);
-  }
-
   public ArrayList<String> requestShowSpecificPartner(String id) throws NoSuchPartnerException {
-    return _warehouse.lookupSpecificPartner(id);
+    return _warehouse.lookupPartnerPlusNotifications(id);
   }
 
   public List<Notification> requestListPartnerNotificationsByMethod(String partner, String method) throws NoSuchPartnerException {
