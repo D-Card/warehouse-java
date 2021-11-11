@@ -40,7 +40,7 @@ public class DoRegisterAcquisitionTransaction extends Command<WarehouseManager> 
                 stringField("product"),
                 realField("price").floatValue(),
                 integerField("amount"));
-        } catch (NoSuchPartnerException | NoSuchProductException e2) {} //this never happens
+        } catch (NoSuchPartnerException | NoSuchProductException e2) {e2.printStackTrace();} //this never happens
       } else { // If it's a derivative product
         int productsLeft = Form.requestInteger(Prompt.numberOfComponents());
         float multiplier = Form.requestReal(Prompt.alpha()).floatValue();
@@ -62,7 +62,7 @@ public class DoRegisterAcquisitionTransaction extends Command<WarehouseManager> 
                 productStrings,
                 productQuantities,
                 multiplier);
-      } catch (NoSuchPartnerException | NoSuchProductException e3) {} //this never happens
+      } catch (NoSuchPartnerException | NoSuchProductException e3) {e3.printStackTrace();} //this never happens
       }
 
     } catch (NotEnoughProductsException e) {}
