@@ -225,6 +225,7 @@ public class Warehouse implements Serializable {
       Partner newPartner = new Partner(id, name, address);
       _partners.add(newPartner);
       _partnerLookup.put(id, newPartner);
+      _notStation.addMailbox(newPartner.getMailbox());
       return;
     }
 
@@ -238,7 +239,7 @@ public class Warehouse implements Serializable {
    * @@param return registered product
    */
   public ProductSimple registerProductSimple(String id, float price, int stock) {
-    ProductSimple product;
+    ProductSimple product = null;
 
     try {
       product = (ProductSimple) lookupProduct(id);
@@ -320,8 +321,9 @@ public class Warehouse implements Serializable {
     float cheapestPrice = -1;
 
     for (Batch b : batchesByProduct) {
-      if (cheapestPrice == -1 || b.getPrice() < cheapestPrice) {
+      if ((cheapestPrice == -1 || b.getPrice() < cheapestPrice) && b != null) {
         cheapestBatch = b;
+        cheapestPrice = b.getPrice();
       }
     }
 
@@ -425,6 +427,16 @@ public class Warehouse implements Serializable {
   public Acquisition acquire(Partner partner, Product product, int amount, float price) {
     _availableBalance -= amount * price;
     _contabilisticBalance -= amount * price;
+
+    // Look up the cheapest batch to check for notifications
+    Batch cheapestBatch = getCheapestBatch(product);
+
+    // If stock was 0, then emit a notification for NEW
+    if (product.getStock() == 0) { _notStation.emitNotification(new Notification("NEW", product, price)); }
+
+    // If new price is cheaper than old cheapest batch, then emit a notification for BARGAIN
+
+    if (cheapestBatch != null && cheapestBatch.getPrice() > price) { _notStation.emitNotification(new Notification("BARGAIN", product, price)); }
 
     registerNewBatch(product, partner, price, amount);
 
@@ -563,16 +575,9 @@ public class Warehouse implements Serializable {
    */
   public void registerNewBatch (Product product, Partner partner, float price, int stock){
     Batch batch = new Batch(product, partner, price, stock);
-    Batch cheapestBatch = getCheapestBatch(product);
-
-    // If stock was 0, then emit a notification for NEW
-    if (product.getStock() == 0) { _notStation.emitNotification(new Notification("NEW", product, price)); }
-
-    // If new price is cheaper than old cheapest batch, then emit a notification for BARGAIN
-    if (cheapestBatch != null && cheapestBatch.getPrice() > price) { _notStation.emitNotification(new Notification("BARGAIN", product, price)); }
 
     product.addStock(stock);
-
+    if (product.getMaxPrice() < price) { product.setMaxPrice(price); }
     _batches.add(batch);
 
     partner.addBatch(batch);
@@ -594,6 +599,7 @@ public class Warehouse implements Serializable {
     while ((s = in.readLine()) != null) {
       String line = new String(s.getBytes(), "UTF-8");
       String[] fields = line.split("\\|");
+
       switch (fields[0]) {
         case "PARTNER" -> {
           registerNewPartner(fields[1], fields[2], fields[3]);
@@ -607,7 +613,10 @@ public class Warehouse implements Serializable {
 
           ProductSimple product = registerProductSimple(id, price, stock);
           Partner partner = lookupPartner(partnerId);
+
           registerNewBatch(product, partner, price, stock);
+
+
 
         }
         case "BATCH_M" -> {
