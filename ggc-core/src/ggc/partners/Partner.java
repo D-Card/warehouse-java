@@ -23,7 +23,8 @@ public class Partner implements Serializable, Comparable<Partner>{
     private Mailbox _mailbox = new Mailbox();
     private PriorityQueue<Batch> _batches = new PriorityQueue<Batch>();
 
-    // TBD - Datastructure for transaction history
+    private ArrayList<Transaction> _sales = new ArrayList<Transaction>();
+    private ArrayList<Transaction> _acquisitions = new ArrayList<Transaction>();
 
     public Partner(String id, String name, String address) {
         _id = id;
@@ -62,6 +63,22 @@ public class Partner implements Serializable, Comparable<Partner>{
 
     public PriorityQueue<Batch> getBatches() { return _batches; }
 
+    public ArrayList<Transaction> getSales() { return _sales; }
+
+    public ArrayList<Transaction> getAcquisitions() { return _acquisitions; }
+
+    public ArrayList<Transaction> getPaidSales() {
+        ArrayList<Transaction> paidSales = new ArrayList<Transaction>();
+
+        for (Transaction t: _sales) {
+            if (t.paid()) {
+                paidSales.add(t);
+            }
+        }
+
+        return paidSales;
+    }
+
     // Setters
     public void setName(String name) {
         _name = name;
@@ -94,6 +111,10 @@ public class Partner implements Serializable, Comparable<Partner>{
     public void addBatch(Batch batch) { _batches.add(batch); }
 
     public void removeBatch(Batch batch) { _batches.remove(batch); }
+
+    public void addSale(Transaction sale) { _sales.add(sale); }
+
+    public void addAcquisition(Transaction acquisition) { _acquisitions.add(acquisition); }
 
     @Override
     public String toString() {

@@ -19,8 +19,7 @@ class DoShowPartner extends Command<WarehouseManager> {
   @Override
   public void execute() throws CommandException {
     try {
-      _display.popup(_receiver.requestShowPartner(stringField("partner")));
-      _display.popup(_receiver.requestListPartnerNotificationsByMethod(stringField("partner"), ""));
+      _display.popup(_receiver.requestShowSpecificPartner(stringField("partner")));
     } catch (NoSuchPartnerException e) {
       throw new UnknownPartnerKeyException(e.getId());
     }

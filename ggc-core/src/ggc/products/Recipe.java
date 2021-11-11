@@ -9,7 +9,7 @@ public class Recipe implements Serializable{
     private static final long serialVersionUID = 202110262344L;
 
     private List<Product> _products = new ArrayList<Product>();
-    private Map<Product, Integer> _productQuantities = new HashMap<Product, Integer>();
+    private Map<Product, Integer> _productQuantities = new LinkedHashMap<Product, Integer>();
 
     public void addProduct(Product product, int quantity) {
         _products.add(product);
@@ -20,7 +20,6 @@ public class Recipe implements Serializable{
     public List<Product> getProducts() {
         return _products;
     }
-
 
     public int getProductQuantity(Product product) {
         int quantity = _productQuantities.get(product);

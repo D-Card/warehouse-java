@@ -18,6 +18,6 @@ public class Breakdown extends Sale implements Serializable {
     @Override
     public String toString() {
         return "DESAGREGAÇÃO|" + getId() + "|" + getPartner().getId() + "|" + getProduct().getId() + "|" +
-                getAmount() + "|" + getBaseValue() + "|" + getRealValue() + "|" + getPaidDate() + "|" + _receipt;
+                getAmount() + "|" + Math.round(getBaseValue()) + "|" + Math.round(getRealValue()) + "|" + getPaidDate() + "|" + _receipt;
     }
 }

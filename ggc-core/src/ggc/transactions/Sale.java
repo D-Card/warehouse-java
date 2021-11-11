@@ -13,6 +13,7 @@ public class Sale extends Transaction implements Serializable {
     private float _realValue;
     private int _deadline;
     private int _paidDate = -1;
+    private boolean _paid = false;
 
     public Sale(int id, Partner partner, Product product, int amount, float baseValue, float realValue, int deadline) {
         setId(id);
@@ -82,6 +83,8 @@ public class Sale extends Transaction implements Serializable {
 
     public void markAsPaid(int date) {
         _paidDate = date;
+        _paid = true;
+
         updateRealValue(date);
 
         Partner partner = getPartner();
@@ -92,7 +95,7 @@ public class Sale extends Transaction implements Serializable {
 
     @Override
     public String toString() {
-        String text = "VENDA|" + getId() + "|" + getPartner().getId() + "|" + getProduct().getId() + "|" + getAmount() + "|" + getBaseValue() + "|" + getRealValue() + "|" + getLimitDate();
+        String text = "VENDA|" + getId() + "|" + getPartner().getId() + "|" + getProduct().getId() + "|" + getAmount() + "|" + Math.round(getBaseValue()) + "|" + Math.round(getRealValue()) + "|" + getLimitDate();
         if (getPaidDate() != -1) {
             text += "|" + getPaidDate();
         }

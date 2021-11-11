@@ -12,6 +12,7 @@ public abstract class Transaction implements Serializable {
     private Partner _partner;
     private Product _product;
     private int _amount;
+    private boolean _paid = true;
 
     // Getters
     public int getId() {
@@ -56,5 +57,7 @@ public abstract class Transaction implements Serializable {
     public void markAsPaid() {};
 
     public void updateRealValue(int date) {};
+
+    public boolean paid() { return _paid; }
 
 }
