@@ -2,7 +2,7 @@ package ggc.exceptions;
 
 public class NotEnoughProductsException extends Exception {
 
-    private static final long serialVersionUID = 202110081026L;
+    private static final long serialVersionUID = 202110081036L;
     private int _currentStock = 0;
     private int _stockNeeded = 0;
     private String _productStringAsked = "";

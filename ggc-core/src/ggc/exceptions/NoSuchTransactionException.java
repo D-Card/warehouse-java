@@ -2,7 +2,7 @@ package ggc.exceptions;
 
 public class NoSuchTransactionException extends Exception {
 
-    private static final long serialVersionUID = 202110081026L;
+    private static final long serialVersionUID = 202110081076L;
 
     private final int _id;
 

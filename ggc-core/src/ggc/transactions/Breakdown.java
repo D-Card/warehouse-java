@@ -7,7 +7,7 @@ import ggc.products.*;
 
 public class Breakdown extends Sale implements Serializable {
 
-    private static final long serialVersionUID = 202111081638L;
+    private static final long serialVersionUID = 202111081640L;
     private Receipt _receipt;
 
     public Breakdown(int id, Partner partner, Product product, int amount, float baseValue, int deadline, Receipt receipt) {
