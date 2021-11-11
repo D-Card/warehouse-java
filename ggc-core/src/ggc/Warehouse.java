@@ -23,8 +23,6 @@ public class Warehouse implements Serializable {
   private Set<Product> _products = new TreeSet<Product>();
   /** Map matching products with their id */
   private Map<String, Product> _productLookup = new TreeMap<String, Product>(String.CASE_INSENSITIVE_ORDER);
-  /** Queue of all batches in warehouse */
-  private Queue<Batch> _batches = new PriorityQueue<Batch>();
   /** Map matching partners with their id */
   private Map<String, Partner> _partnerLookup = new TreeMap<String, Partner>(String.CASE_INSENSITIVE_ORDER);
   /** Set of all the partners the warehouse has */
@@ -132,9 +130,11 @@ public class Warehouse implements Serializable {
    * @@return sorted list of all batches
    */
   public ArrayList<Batch> listAllBatches() {
-    updateBatches();
+    ArrayList<Batch> batchList = new ArrayList<Batch>();
 
-    ArrayList<Batch> batchList = new ArrayList<Batch>(_batches);
+    for (Product p: _products) {
+      batchList.addAll(listBatchesByProduct(p));
+    }
 
     batchList.sort(null);
 
@@ -155,10 +155,7 @@ public class Warehouse implements Serializable {
    * @@return sorted list of partner's batches
    */
   public List<Batch> listBatchesByPartner(Partner partner) {
-    updateBatches();
-
     ArrayList<Batch> batchList = new ArrayList<Batch>(partner.getBatches());
-
     batchList.sort(null);
 
     return batchList;
@@ -178,10 +175,7 @@ public class Warehouse implements Serializable {
    * @@return sorted list of batches
    */
   public List<Batch> listBatchesByProduct(Product product) {
-    updateBatches();
-
     ArrayList<Batch> batchList = new ArrayList<Batch>(product.getBatches());
-
     batchList.sort(null);
 
     return batchList;
@@ -348,11 +342,7 @@ public class Warehouse implements Serializable {
    * @@param batch batch to be removed
    */
 
-  public void removeBatch(Batch batch) {
-    _batches.remove(batch);
-    batch.getPartner().removeBatch(batch);
-    batch.getProduct().removeBatch(batch);
-  }
+
 
 
   /**
@@ -368,10 +358,10 @@ public class Warehouse implements Serializable {
     while (quantity > 0) {
       currentBatch = getCheapestBatch(product);
 
-      if (currentBatch.getStock() < quantity) {
+      if (currentBatch.getStock() <= quantity) {
         price += currentBatch.getStock() * currentBatch.getPrice();
         quantity -= currentBatch.getStock();
-        removeBatch(currentBatch);
+        currentBatch.destroy();
       } else {
         price += quantity * currentBatch.getPrice();
         currentBatch.addStock(-quantity);
@@ -721,15 +711,6 @@ public class Warehouse implements Serializable {
   }
 
 
-  
-  public void updateBatches() {
-    for (Batch b: _batches) {
-      if (b.getStock() <= 0) {
-        removeBatch(b);
-      }
-    }
-  }
-
   // -------------------------------------------------------------------------------------------------------------------
 
   /**
@@ -744,7 +725,6 @@ public class Warehouse implements Serializable {
 
     product.addStock(stock);
     if (product.getMaxPrice() < price) { product.setMaxPrice(price); }
-    _batches.add(batch);
 
     partner.addBatch(batch);
     product.addBatch(batch);
@@ -808,6 +788,5 @@ public class Warehouse implements Serializable {
       }
     }
   }
-
 }
 

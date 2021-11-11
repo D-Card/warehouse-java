@@ -56,8 +56,16 @@ public class Batch implements Serializable, Comparable<Batch>{
         _partner = partner;
     }
 
+    public void destroy() {
+        _partner.removeBatch(this);
+        _product.removeBatch(this);
+    }
+
     public void addStock(int stock) {
         _stock += stock;
+        if (_stock <= 0) {
+            destroy();
+        }
     }
 
     @Override
