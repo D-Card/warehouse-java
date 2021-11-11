@@ -84,6 +84,7 @@ public class WarehouseManager {
 
   public void requestToggleProductNotifications(String partner, String product) throws NoSuchPartnerException, NoSuchProductException {
    _warehouse.toggleProductNotifications(partner, product);
+   _updated = true;
   }
 
   public ArrayList<Transaction> requestShowPartnerPaidSales(String partner) throws NoSuchPartnerException {
@@ -104,27 +105,33 @@ public class WarehouseManager {
 
   public void requestPay(int id) throws NoSuchTransactionException {
     _warehouse.pay(id);
+    _updated = true;
   }
 
     public void requestAttemptBreakdown(String partner, String product, int amount) throws NotEnoughProductsException, NoSuchPartnerException, NoSuchProductException {
     _warehouse.attemptBreakdown(partner, product, amount);
+    _updated = true;
   }
 
   public void requestAttemptSale(String partner, int deadline, String product, int amount) throws NotEnoughProductsException, NoSuchPartnerException, NoSuchProductException {
     _warehouse.attemptSale(partner, product, amount, deadline);
+    _updated = true;
   }
 
   public void requestAcquire(String partner, String product, float price, int amount) throws NotEnoughProductsException, NoSuchPartnerException, NoSuchProductException {
     _warehouse.acquire(partner, product, amount, price);
+    _updated = true;
   }
 
   public void requestAcquireNewProductSimple(String partner, String product, float price, int stock) throws NoSuchPartnerException, NoSuchProductException{
     //runs when acquiring a never seen simple product
     _warehouse.acquireNewProductSimple(partner, product, price, stock);
+    _updated = true;
   }
 
   public void requestAcquireNewProductDerivative(String partner, String product, float price, int stock, ArrayList<String> products, ArrayList<Integer> productQuantities, float multiplier) throws NoSuchPartnerException, NoSuchProductException{
     _warehouse.acquireNewProductDerivative(partner, product, price, stock, products, productQuantities, multiplier);
+    _updated = true;
   }
 
   /**
