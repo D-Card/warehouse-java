@@ -61,7 +61,6 @@ public class Sale extends Transaction implements Serializable {
     }
 
     private int calculatePeriod(int date) {
-        int dayDif = _deadline - date;
         int n = getProduct().getDeadline();
 
         if (date <= _deadline - n) { // Updating the period in which the payment currently lies
