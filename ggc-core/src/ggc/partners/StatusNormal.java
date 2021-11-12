@@ -19,6 +19,9 @@ public class StatusNormal extends Status implements Serializable {
     }
 
     public float calculateRealValue(float baseValue, int period, int dayDifference) {
+        if (baseValue < 0) {
+            return 0;
+        }
         switch (period) {
             case (1): // Period 1
                 return (baseValue * 0.9f);
