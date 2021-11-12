@@ -64,11 +64,11 @@ public class Sale extends Transaction implements Serializable {
         int dayDif = _deadline - date;
         int n = getProduct().getDeadline();
 
-        if (dayDif >= n) { // Updating the period in which the payment currently lies
+        if (date <= _deadline - n) { // Updating the period in which the payment currently lies
             return 1;
-        } else if (dayDif >= 0 && dayDif < n) {
+        } else if (date <= _deadline) {
             return 2;
-        } else if (dayDif < 0 && dayDif <= n) {
+        } else if (date <= _deadline + n) {
             return 3;
         }
 
