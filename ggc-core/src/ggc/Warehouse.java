@@ -607,13 +607,7 @@ public class Warehouse implements Serializable {
    * @@return list of selected partner paid sales
    */
   public ArrayList<Transaction> lookupPaidSalesByPartner(Partner partner) {
-    ArrayList<Transaction> paidSales = new ArrayList<Transaction>();
-
-    for (Transaction t: paidSales) {
-      t.updateRealValue(_date);
-    }
-
-    return paidSales;
+    return partner.getPaidSales();
   }
 
 

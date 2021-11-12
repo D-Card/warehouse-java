@@ -12,7 +12,7 @@ public abstract class Transaction implements Serializable, Comparable<Transactio
     private Partner _partner;
     private Product _product;
     private int _amount;
-    private boolean _paid = true;
+    private boolean _paid = false;
 
     // Getters
     public int getId() {
@@ -61,6 +61,8 @@ public abstract class Transaction implements Serializable, Comparable<Transactio
     public abstract void updateRealValue(int date);
 
     public boolean paid() { return _paid; }
+
+    public void setPaid() {_paid = true;}
 
     public int compareTo(Transaction transaction) {
         return (transaction.getId() - _id);

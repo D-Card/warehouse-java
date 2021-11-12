@@ -13,7 +13,6 @@ public class Sale extends Transaction implements Serializable {
     private float _realValue;
     private int _deadline;
     private int _paidDate = -1;
-    private boolean _paid = false;
 
     public Sale(int id, Partner partner, Product product, int amount, float baseValue, float realValue, int deadline) {
         setId(id);
@@ -85,7 +84,7 @@ public class Sale extends Transaction implements Serializable {
 
     public void markAsPaid(int date) {
         _paidDate = date;
-        _paid = true;
+        setPaid();
 
         updateRealValue(date);
         getPartner().getStatus().updatePoints(this);
@@ -96,7 +95,7 @@ public class Sale extends Transaction implements Serializable {
         String text = "VENDA|" + getId() + "|" + getPartner().getId() + "|" + getProduct().getId() + "|" + getAmount()
                 + "|" + Math.round(getBaseValue()) + "|" + Math.round(getRealValue()) + "|" + getLimitDate();
 
-        if (_paid) {
+        if (paid()) {
             return (text + "|" + getPaidDate());
         }
 
