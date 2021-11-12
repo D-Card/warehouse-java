@@ -26,10 +26,10 @@ public class StatusSelection extends Status implements Serializable {
                 if (dayDifference >= 2) { return (baseValue * 0.95f); }
                 else { return (baseValue); }
             case (3): // Period 3
-                if (dayDifference > 1) { return (baseValue * (1 + dayDifference * 0.02f)); }
+                if (dayDifference > 1) { return (baseValue * (1 - dayDifference * 0.02f)); }
                 else { return (baseValue); }
             case (4): // Period 4
-                return (baseValue * (1 + dayDifference * 0.05f));
+                return (baseValue * (1 - dayDifference * 0.05f));
         }
 
         return (baseValue);

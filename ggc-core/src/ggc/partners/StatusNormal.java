@@ -25,9 +25,9 @@ public class StatusNormal extends Status implements Serializable {
             case (2): // Period 2
                 return (baseValue);
             case (3): // Period 3
-                return (baseValue * (1 + dayDifference * 0.05f));
+                return (baseValue * (1 - dayDifference * 0.05f));
             case (4): // Period 4
-                return (baseValue * (1 + dayDifference * 0.1f));
+                return (baseValue * (1 - dayDifference * 0.1f));
         }
 
         return (baseValue);
