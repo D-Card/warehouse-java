@@ -14,7 +14,6 @@ public abstract class Product implements Serializable, Comparable<Product>{
     private String _id;
     private float _maxPrice = 0;
     private int _stock = 0;
-    private int _deadline = 5;
     private PriorityQueue<Batch> _batches = new PriorityQueue<Batch>();
 
     // Getters
@@ -30,12 +29,11 @@ public abstract class Product implements Serializable, Comparable<Product>{
         return _stock;
     }
 
-    public int getDeadline() { return _deadline; }
-
     public Recipe getRecipe() { return null; }
 
     public PriorityQueue<Batch> getBatches() { return _batches; }
 
+    public abstract int getDeadline();
 
     // Setters
     public void setId(String id) {

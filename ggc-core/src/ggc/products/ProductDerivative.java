@@ -25,6 +25,8 @@ public class ProductDerivative extends Product {
         return _multiplier;
     }
 
+    public int getDeadline() { return _deadline; }
+
     // Setters
     public void setRecipe(Recipe recipe) {
         _recipe = recipe;

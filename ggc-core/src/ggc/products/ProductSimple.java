@@ -12,6 +12,8 @@ public class ProductSimple extends Product {
         setId(id);
     }
 
+    public int getDeadline() { return _deadline; }
+
     public boolean enoughStock(int amount) { return (amount <= getStock()); }
 
     public void throwFirstMissingSimpleProduct(int amount) throws NotEnoughProductsException {

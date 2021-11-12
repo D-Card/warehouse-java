@@ -68,7 +68,7 @@ public class Sale extends Transaction implements Serializable {
             return 1;
         } else if (dayDif >= 0 && dayDif < n) {
             return 2;
-        } else if (dayDif < 0 && dayDif >= n) {
+        } else if (dayDif < 0 && dayDif <= n) {
             return 3;
         }
 
