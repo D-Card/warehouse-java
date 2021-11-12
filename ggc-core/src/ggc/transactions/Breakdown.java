@@ -13,7 +13,6 @@ public class Breakdown extends Sale implements Serializable {
     public Breakdown(int id, Partner partner, Product product, int amount, float baseValue, int deadline, Receipt receipt) {
         super(id, partner, product, amount, baseValue, baseValue, deadline);
         _receipt = receipt;
-        setPaid();
     }
 
     @Override

@@ -588,9 +588,11 @@ public class Warehouse implements Serializable {
    */
 
   public void pay(Transaction transaction) {
+    if (!transaction.paid()){
     transaction.markAsPaid(_date);
 
     _availableBalance += transaction.getRealValue();
+    }
   }
 
   /**
